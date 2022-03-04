@@ -8,7 +8,7 @@ namespace WebEnterprise.Models
 
         public string Title { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime OpenDate { get; set; }
