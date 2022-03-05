@@ -16,7 +16,11 @@ namespace WebEnterprise.Models.DTO
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime ClosedDate { get; set; }
 
+        public int CatId { get; set; }
+
         public string CatName { get; set; }
+
+        public string UserId { get; set; }
 
         public string AuthorName { get; set; }
     }

@@ -25,21 +25,21 @@ namespace WebEnterprise.Controllers
             return View(cats);
         }
 
-        public IActionResult AddCat()
-        {
-            return View();
-        }
-
+   
         [HttpPost]
-        public IActionResult AddCat(Category res)
+        public IActionResult AddCat(string name, string description)
         {
+          
             if (ModelState.IsValid)
             {
-                context.Categories.Add(res);
+                var cate = new Category();
+                cate.Name = name;
+                cate.Description = description;
+                context.Categories.Add(cate);
                 context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(res);
+            return BadRequest();
         }
 
         public IActionResult EditCat(int id)
