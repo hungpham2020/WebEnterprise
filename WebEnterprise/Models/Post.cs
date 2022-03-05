@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebEnterprise.Models
 {
@@ -21,7 +20,6 @@ namespace WebEnterprise.Models
 
         public Category Category { get; set; }
 
-        [DisplayName("Author")]
         public string UserId { get; set; }
 
         public CustomUser CustomUser { get; set; }
