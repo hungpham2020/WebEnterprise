@@ -27,5 +27,14 @@ namespace WebEnterprise.Controllers
                          }).ToList();
             return View(posts);
         }
+
+        [HttpPost]
+        public IActionResult AddPost(PostDTO post)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+        }
     }
 }
