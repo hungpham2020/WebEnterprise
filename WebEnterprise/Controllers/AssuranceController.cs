@@ -26,7 +26,7 @@ namespace WebEnterprise.Controllers
                          select new UserDTO
                          {
                              Id = u.Id,
-                             //FullName = u.FullName,
+                             FullName = u.FullName,
                              UserName = u.UserName,
                              Email = u.Email,
                          }).ToList();
