@@ -26,28 +26,23 @@ namespace WebEnterprise.Controllers
                              select new UserDTO
                              {
                                  Id = u.Id,
-                                 //FullName = u.FullName,
+                                 FullName = u.FullName,
                                  UserName = u.UserName,
                                  Email = u.Email,
                              }).ToList();
             return View(coordinators);
         }
 
-        public IActionResult AddCoordinator()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public async Task<IActionResult> AddCoordinator(UserDTO user)
+        public async Task<IActionResult> AddCoordinator(string fullname, string username, string email)
         {
             if (ModelState.IsValid)
             {
                 var account = new CustomUser
                 {
-                    UserName = user.UserName,
-                    FullName = user.FullName,
-                    Email = user.Email,
+                    UserName = username,
+                    FullName = fullname,
+                    Email = email
                 };
                 var result = await userManager.CreateAsync(account, "Abc@12345");
                 if (result.Succeeded)
@@ -57,12 +52,19 @@ namespace WebEnterprise.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            return View(user);
+            return BadRequest();
         }
 
         public IActionResult EditCoordinator(string id)
         {
-            var coordinator = context.Users.FirstOrDefault(u => u.Id == id);
+            var coordinator = context.Users.Where(u => u.Id == id).Select(u => new UserDTO
+            {
+                UserName=u.UserName,
+                FullName=u.FullName,
+                Email=u.Email,
+                PhoneNumber = u.PhoneNumber
+            }).FirstOrDefault();
+
             if (coordinator == null)
             {
                 return RedirectToAction("Index");
@@ -71,16 +73,23 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditCoordinator(UserDTO coordinator)
+        public IActionResult EditCoordinator(UserDTO res)
         {
             if (ModelState.IsValid)
             {
-                context.Entry(coordinator).State = EntityState.Modified;
-                context.SaveChanges();
-                TempData["message"] = $"Successfully Edit Coordinator {coordinator.FullName}";
+                var coordinator = context.Users.Find(res.Id);
+                if(coordinator != null) 
+                {
+                    coordinator.FullName = res.FullName;
+                    coordinator.UserName = res.UserName;
+                    coordinator.Email = res.Email;
+                    coordinator.PhoneNumber = res.PhoneNumber;
+                    context.SaveChanges();
+                    TempData["message"] = $"Successfully Edit Coordinator {coordinator.FullName}";
+                }
                 return RedirectToAction("Index");
             }
-            return View(coordinator);
+            return BadRequest();
         }
 
         public IActionResult DeleteCoordinator(string id)

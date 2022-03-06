@@ -26,28 +26,24 @@ namespace WebEnterprise.Controllers
                          select new UserDTO
                          {
                              Id = u.Id,
-                             //FullName = u.FullName,
+                             FullName = u.FullName,
                              UserName = u.UserName,
                              Email = u.Email,
                          }).ToList();
             return View(staff);
         }
 
-        public IActionResult AddStaff()
-        {
-            return View();
-        }
-
+        
         [HttpPost]
-        public async Task<IActionResult> AddStaff(UserDTO user)
+        public async Task<IActionResult> AddStaff(string fullname, string username, string email)
         {
             if (ModelState.IsValid)
             {
                 var account = new CustomUser
                 {
-                    UserName = user.UserName,
-                    FullName = user.FullName,
-                    Email = user.Email,
+                    UserName = username,
+                    FullName = fullname,
+                    Email = email
                 };
                 var result = await userManager.CreateAsync(account, "Abc@12345");
                 if (result.Succeeded)
@@ -57,12 +53,18 @@ namespace WebEnterprise.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            return View(user);
+            return BadRequest();
         }
 
         public IActionResult EditStaff(string id)
         {
-            var staff = context.Users.FirstOrDefault(u => u.Id == id);
+            var staff = context.Users.Where(u => u.Id == id).Select(u => new UserDTO
+            {
+                UserName=u.UserName,
+                FullName=u.FullName,
+                Email=u.Email,
+                PhoneNumber=u.PhoneNumber
+            }).FirstOrDefault();
             if (staff == null)
             {
                 return RedirectToAction("Index");
@@ -71,16 +73,23 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditStaff(UserDTO staff)
+        public IActionResult EditStaff(UserDTO res)
         {
             if (ModelState.IsValid)
             {
-                context.Entry(staff).State = EntityState.Modified;
+                var staff = context.Users.FirstOrDefault(context => context.Id == res.Id);
+                {
+                    staff.Email = res.Email;
+                    staff.UserName = res.UserName;
+                    staff.FullName = res.FullName;
+                    staff.PhoneNumber = res.PhoneNumber;
+
+                };
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Edit Staff {staff.FullName}";
                 return RedirectToAction("Index");
             }
-            return View(staff);
+            return BadRequest();
         }
 
         public IActionResult DeleteStaff(string id)

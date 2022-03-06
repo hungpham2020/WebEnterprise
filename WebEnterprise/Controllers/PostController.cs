@@ -29,6 +29,7 @@ namespace WebEnterprise.Controllers
             ViewBag.Cat = new SelectList(cats);
         }
         
+
         private void SelectedCat(int id)
         {
             var selectedCat = context.Categories.FirstOrDefault(c => c.Id == id);
