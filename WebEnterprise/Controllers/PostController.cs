@@ -82,6 +82,7 @@ namespace WebEnterprise.Controllers
 
         public IActionResult AddPost()
         {
+            ViewCat();
             return View();
         }
 
@@ -103,6 +104,7 @@ namespace WebEnterprise.Controllers
                 TempData["message"] = $"Successfully Add new Post {post.Title}";
                 return RedirectToAction("Index");
             }
+            ViewCat();
             return View(res);
         }
 

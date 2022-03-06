@@ -18,10 +18,7 @@ namespace WebEnterprise.Models
 
         public int CateId { get; set; }
 
-        public Category Category { get; set; }
-
         public string UserId { get; set; }
 
-        public CustomUser CustomUser { get; set; }
     }
 }

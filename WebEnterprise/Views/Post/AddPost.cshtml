@@ -5,62 +5,41 @@
     Layout = "../Shared/_AdminLayout.cshtml";
 }
 
-
-                    <form method="post" asp-action="AddPost" asp-controller="Post">
-                        <div class="nk-add-product toggle-slide toggle-slide-right" data-content="addpost" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
-                            <div class="nk-block-head">
-                                <div class="nk-block-head-content">
-                                    <h5 class="nk-block-title">New Post</h5>
-                                    <div class="nk-block-des">
-                                        <p>Add Post Status.</p>
-                                    </div>
-                                </div>
-                            </div><!-- .nk-block-head -->
-
-                            <div class="nk-block">
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label class="form-label" for="Email">Title</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" class="form-control" name="Title" >
-                                                <span asp-validation-for="Title" class="text-danger"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label" for="CatName">Category</label>
-                                            <div class="form-control-wrap">
-                                                
-                                                <select  asp-items="@ViewBag.Cat" class="form-control-wrap" aria-label="Default select example">
-                                                    
-                                                </select>
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label class="form-label" for="Description">Description</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" class="form-control" name="Description">
-                                                <span asp-validation-for="Description" class="text-danger"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- content  -->
+<div class="modal-content">
+	<div class="modal-body modal-body-md">
+		<h5 class="title">Add student</h5>
+		<form asp-action="AddPost" asp-controller="Post" method="post" class="pt-2" enctype="multipart/form-data">
+			<div class="row gy-4">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="Title" class="form-label" for="full-name">Title</label>
+						<input asp-for="Title" type="text" class="form-control" id="full-name" placeholder="Full name">
+						 <span asp-validation-for="Title" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="Description" class="form-label" for="dob">Description</label>
+						<input asp-for="Description" type="text" class="form-control" id="dob" placeholder="Date of Birth">
+						<span asp-validation-for="Description" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label  class="form-label" for="dob">Category</label>
+						@Html.DropDownListFor( p => p.CatId, (SelectList)ViewBag.Cat)
+						<span asp-validation-for="Description" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+						<li>
+							<button class="btn btn-primary" onclick="document.querySelector('input[name=" Status"]:checked').value">Add Student</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+			
+		</form>
+	</div><!-- .modal-body -->
+</div>

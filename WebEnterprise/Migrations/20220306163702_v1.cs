@@ -64,6 +64,24 @@ namespace WebEnterprise.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OpenDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClosedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CateId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserLikePosts",
                 columns: table => new
                 {
@@ -185,37 +203,6 @@ namespace WebEnterprise.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Posts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OpenDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ClosedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CateId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CustomUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Posts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Posts_AspNetUsers_CustomUserId",
-                        column: x => x.CustomUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Posts_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
@@ -255,7 +242,7 @@ namespace WebEnterprise.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, "c52a2456-e7b6-4650-b6ea-19a2cb60cc97", "admin@gmail.com", true, null, true, null, null, "admin", "AQAAAAEAACcQAAAAEAWcfvRZIxMfA1ddVqF6lHDu9uUnT17217RwWdNkbLq6XcTLjysPi91uLXt35jMv2w==", null, false, "f92aca5f-203a-45f7-88fe-6429682dc01e", false, "Admin" });
+                values: new object[] { "1", 0, "4a370ec1-df46-4ffd-864d-f2889689f2de", "admin@gmail.com", true, null, true, null, null, "admin", "AQAAAAEAACcQAAAAEHMzLGuUiVvUUq21plw92XvY1aA1NxJZ/6+unO6p0QCTYgvl5C0s5+IwKHvClaRSjg==", null, false, "3de8055b-1267-4a55-bdc3-206c12962ff5", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -310,16 +297,6 @@ namespace WebEnterprise.Migrations
                 name: "IX_Comments_PostId",
                 table: "Comments",
                 column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Posts_CategoryId",
-                table: "Posts",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Posts_CustomUserId",
-                table: "Posts",
-                column: "CustomUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -340,6 +317,9 @@ namespace WebEnterprise.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
                 name: "Comments");
 
             migrationBuilder.DropTable(
@@ -349,13 +329,10 @@ namespace WebEnterprise.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Posts");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Posts");
         }
     }
 }
