@@ -55,6 +55,7 @@ namespace WebEnterprise.Controllers
                              Id = p.Id,
                              Title = p.Title,
                              Description = p.Description,
+                             CatId = c.Id,
                              CatName = c.Name,
                              AuthorName = u.FullName,
                          }).ToList();
@@ -78,6 +79,12 @@ namespace WebEnterprise.Controllers
             return View(posts);
         }
 
+
+        public IActionResult AddPost()
+        {
+            return View();
+        }
+
         [HttpPost]
         public IActionResult AddPost(PostDTO res)
         {
@@ -96,7 +103,7 @@ namespace WebEnterprise.Controllers
                 TempData["message"] = $"Successfully Add new Post {post.Title}";
                 return RedirectToAction("Index");
             }
-            return BadRequest();
+            return View(res);
         }
 
 

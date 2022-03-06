@@ -1,0 +1,66 @@
+﻿@model WebEnterprise.Models.DTO.PostDTO
+
+@{
+    ViewData ["Title"] ="Index";
+    Layout = "../Shared/_AdminLayout.cshtml";
+}
+
+
+                    <form method="post" asp-action="AddPost" asp-controller="Post">
+                        <div class="nk-add-product toggle-slide toggle-slide-right" data-content="addpost" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
+                            <div class="nk-block-head">
+                                <div class="nk-block-head-content">
+                                    <h5 class="nk-block-title">New Post</h5>
+                                    <div class="nk-block-des">
+                                        <p>Add Post Status.</p>
+                                    </div>
+                                </div>
+                            </div><!-- .nk-block-head -->
+
+                            <div class="nk-block">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="form-label" for="Email">Title</label>
+                                            <div class="form-control-wrap">
+                                                <input type="text" class="form-control" name="Title" >
+                                                <span asp-validation-for="Title" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="CatName">Category</label>
+                                            <div class="form-control-wrap">
+                                                
+                                                <select  asp-items="@ViewBag.Cat" class="form-control-wrap" aria-label="Default select example">
+                                                    
+                                                </select>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="form-label" for="Description">Description</label>
+                                            <div class="form-control-wrap">
+                                                <input type="text" class="form-control" name="Description">
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- content  -->
