@@ -19,16 +19,16 @@ namespace WebEnterprise.Controllers
 
         private void ViewCat()
         {
-            //var cats = context.Categories.Select(c => new Category
-            //{
-            //    Id = c.Id,
-            //    Name = c.Name,
-            //    Description = c.Description,
-            //}).ToList();
+            var cats = context.Categories.Select(c => new Category
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description,
+            }).ToList();
 
-            //ViewBag.Cat = new SelectList(cats);
-            
-            ViewBag.Cat = context.Categories.ToList();
+            ViewBag.Cat = new SelectList(cats, "Id", "Name");
+
+            //ViewBag.Cat = context.Categories.ToList();
 
         }
 

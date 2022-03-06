@@ -156,11 +156,8 @@
                                             <label class="form-label" for="CatName">Category</label>
                                             <div class="form-control-wrap">
                                                 
-                                                <select class="form-control-wrap" aria-label="Default select example">
-                                                    @foreach (var r in ViewBag.Cat)
-                                                    {
-                                                         <option  value="@r.Id" id="@r.Id" name="@(r.Id)" >@r.Name</option>
-                                                    }
+                                                <select  asp-items="@ViewBag.Cat" class="form-control-wrap" aria-label="Default select example">
+                                                    
                                                 </select>
                                                 
                                             </div>
