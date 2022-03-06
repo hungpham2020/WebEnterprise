@@ -4,9 +4,11 @@
     Layout = "../Shared/_AdminLayout.cshtml";
 }
 
+
 <!DOCTYPE html>
 <html lang="zxx" class="js">
 <body class="nk-body bg-lighter npc-general has-sidebar ">
+
 
      <!-- main header  -->
                 <!-- main header  -->
@@ -131,6 +133,13 @@
                                     </div>
                                 </div>
                             </div><!-- .nk-block-head -->
+
+                            
+     @if (!ViewData.ModelState.IsValid)
+    {
+        @Html.ValidationSummary(false,"Error", new {@class = "text-danger"})
+    }
+
                             <div class="nk-block">
                                 <div class="row g-3">
                                     <div class="col-12">
@@ -141,33 +150,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @*<div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label" for="AuthorName">Author</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" class="form-control" name="AuthorName">
-                                            </div>
-                                        </div>
-                                    </div>*@
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="form-label" for="CatName">Category</label>
                                             <div class="form-control-wrap">
-                                        @*       
-                                               @foreach(var i in Model )
-                                                {
-                                                    <table class="table table-hover">
-
-                                                            <thead class="thead-dark">
-                                                                <tr>
-
-                                                                  @Html.DisplayFor(modelItem =>i.)
-
-                                                                </tr>
-                                                            </thead>
-                                                        </table>
-                                                }
-                                                *@
+                                                
+                                                <select class="form-control-wrap" aria-label="Default select example">
+                                                    @foreach (var r in ViewBag.Cat)
+                                                    {
+                                                         <option  value="@r.Id" id="@r.Id" name="@(r.Id)" >@r.Name</option>
+                                                    }
+                                                </select>
                                                 
                                             </div>
                                         </div>

@@ -19,16 +19,19 @@ namespace WebEnterprise.Controllers
 
         private void ViewCat()
         {
-            var cats = context.Categories.Select(c => new Category
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Description = c.Description,
-            }).ToList();
+            //var cats = context.Categories.Select(c => new Category
+            //{
+            //    Id = c.Id,
+            //    Name = c.Name,
+            //    Description = c.Description,
+            //}).ToList();
 
-            ViewBag.Cat = new SelectList(cats);
+            //ViewBag.Cat = new SelectList(cats);
+            
+            ViewBag.Cat = context.Categories.ToList();
+
         }
-        
+
 
         private void SelectedCat(int id)
         {
@@ -93,8 +96,11 @@ namespace WebEnterprise.Controllers
                 TempData["message"] = $"Successfully Add new Post {post.Title}";
                 return RedirectToAction("Index");
             }
-            return View(res);
+            return BadRequest();
         }
+
+
+
 
         public IActionResult EditPost(int id)
         {
