@@ -31,7 +31,7 @@ namespace WebEnterprise.Controllers
         
         private void SelectedCat(int id)
         {
-            var selectedCat = context.Categories.FirstOrDefault(c => c.Id == id);
+            var selectedCat = context.Posts.Where(p => p.Id == id).Select(c => c.Id).FirstOrDefault();
             var cats = context.Categories.Select(c => new Category
             {
                 Id = c.Id,
