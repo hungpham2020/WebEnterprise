@@ -1,16 +1,9 @@
-﻿@model IEnumerable<WebEnterprise.Models.DTO.PostDTO>
+﻿@model IEnumerable<WebEnterprise.Models.Post>
 @{
     ViewData["Title"] = "Index";
     Layout = "../Shared/_AdminLayout.cshtml";
 }
-@{
-    List<int> selectedids = new List<int>();
-    if (TempData["CatIds"] != null)
-    {
-        selectedids = TempData["CatIds"].ToString().Split(',')
-        .Select(id => Int32.Parse(id)).ToList();
-    }
-}
+
 
 <!DOCTYPE html>
 <html lang="zxx" class="js">
@@ -59,7 +52,6 @@
                                     <div class="nk-tb-list">
                                         <div class="nk-tb-item nk-tb-head">
                                             <div class="nk-tb-col tb-col-sm"><span>Title</span></div>
-                                            <div class="nk-tb-col tb-col-md"><span>Category</span></div>
                                             <div class="nk-tb-col tb-col-md"><span>Description</span></div>
                                             <div class="nk-tb-col tb-col-md"><span>Author</span></div>
                                             <div class="nk-tb-col tb-col-md"><span>Like</span></div>
@@ -86,19 +78,14 @@
 
                                                 <div class="nk-tb-col">
                                                     <span class="tb-lead">
-                                                        @Html.DisplayFor(modelItem => item.CatName)
-                                                    </span>
-                                                </div>
-
-                                                <div class="nk-tb-col">
-                                                    <span class="tb-sub">
                                                         @Html.DisplayFor(modelItem => item.Description)
                                                     </span>
                                                 </div>
 
+
                                                 <div class="nk-tb-col">
                                                     <span class="tb-sub">
-                                                        @Html.DisplayFor(modelItem => item.AuthorName)
+                                                        @Html.DisplayFor(modelItem => item.UserId)
                                                     </span>
                                                 </div>
 
@@ -167,19 +154,7 @@
                                         </button>
                                         <div class="dropdown-menu">
 
-                                            @foreach (var r in ViewBag.Cat)
-                                            {
-                                                <li class="nk-menu-item has-sub">
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio"
-                                                           value="@r.Id" id="@r.Name" name="CatIds"
-                                                           @(selectedids.Contains(r.Id) ? "checked" : string.Empty) />
-                                                        <label class="form-check-label" for="@r.Name">
-                                                            @r.Name
-                                                        </label>
-                                                    </div>
-                                                </li>
-                                            }
+                                        
 
                                         </div>
                                     </div>
@@ -209,3 +184,5 @@
 
 </body>
 </html>
+
+

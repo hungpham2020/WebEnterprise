@@ -12,7 +12,7 @@ using WebEnterprise.Data;
 namespace WebEnterprise.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220306163702_v1")]
+    [Migration("20220305114843_v1")]
     partial class v1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -319,14 +319,14 @@ namespace WebEnterprise.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4a370ec1-df46-4ffd-864d-f2889689f2de",
+                            ConcurrencyStamp = "c52a2456-e7b6-4650-b6ea-19a2cb60cc97",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEHMzLGuUiVvUUq21plw92XvY1aA1NxJZ/6+unO6p0QCTYgvl5C0s5+IwKHvClaRSjg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAWcfvRZIxMfA1ddVqF6lHDu9uUnT17217RwWdNkbLq6XcTLjysPi91uLXt35jMv2w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3de8055b-1267-4a55-bdc3-206c12962ff5",
+                            SecurityStamp = "f92aca5f-203a-45f7-88fe-6429682dc01e",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });
@@ -343,8 +343,14 @@ namespace WebEnterprise.Migrations
                     b.Property<int>("CateId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ClosedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -361,6 +367,10 @@ namespace WebEnterprise.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CustomUserId");
 
                     b.ToTable("Posts");
                 });
@@ -452,6 +462,23 @@ namespace WebEnterprise.Migrations
                     b.Navigation("CustomUser");
 
                     b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("WebEnterprise.Models.Post", b =>
+                {
+                    b.HasOne("WebEnterprise.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebEnterprise.Models.CustomUser", "CustomUser")
+                        .WithMany()
+                        .HasForeignKey("CustomUserId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CustomUser");
                 });
 #pragma warning restore 612, 618
         }

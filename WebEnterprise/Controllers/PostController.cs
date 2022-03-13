@@ -19,6 +19,10 @@ namespace WebEnterprise.Controllers
 
         private void ViewCat()
         {
+            ViewBag.Cat = context.Categories.ToList();
+        }
+        private void ViewCate()
+        {
             var cats = context.Categories.Select(c => new Category
             {
                 Id = c.Id,
@@ -27,11 +31,19 @@ namespace WebEnterprise.Controllers
             }).ToList();
 
             ViewBag.Cat = new SelectList(cats, "Id", "Name");
-
-            //ViewBag.Cat = context.Categories.ToList();
-
         }
-
+        private List<Category> LoadCat(string form)
+        {
+            if (form != null)
+            {
+                var selected = form.Split(',').Select(id => Int32.Parse(id)).ToArray();
+                return context.Categories.Where(c => selected.Contains(c.Id)).ToList();
+            }
+            else
+            {
+                return context.Categories.Where(c => c.Id == 0).ToList();
+            }
+        }
 
         private void SelectedCat(int id)
         {
@@ -48,8 +60,8 @@ namespace WebEnterprise.Controllers
         public IActionResult Index()
         {
             var posts = (from p in context.Posts
-                         join c in context.Categories on p.CateId equals c.Id
                          join u in context.Users on p.UserId equals u.Id
+                         join c in context.Categories on p.CateId equals c.Id
                          select new PostDTO
                          {
                              Id = p.Id,
@@ -57,7 +69,7 @@ namespace WebEnterprise.Controllers
                              Description = p.Description,
                              CatId = c.Id,
                              CatName = c.Name,
-                             AuthorName = u.FullName,
+                             AuthorName =u.UserName,
                          }).ToList();
             ViewCat();
             return View(posts);
@@ -79,45 +91,71 @@ namespace WebEnterprise.Controllers
             return View(posts);
         }
 
-
-        public IActionResult AddPost()
-        {
-            ViewCat();
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult AddPost(PostDTO res)
+        public IActionResult AddPost(PostDTO res, IFormCollection f)
         {
-            if (ModelState.IsValid)
+            var cat = LoadCat(f["CatIds"]);
+            foreach(var c in cat)
             {
-                var post = new Post
-                {
-                    Title = res.Title,
-                    Description = res.Description,
-                    CateId = res.CatId,
-                    OpenDate = DateTime.Now,
-                    UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                };
+                res.CatId = c.Id;
+            }
+            if (!ModelState.IsValid)
+            {
+                var post = new Post();
+                post.Title = res.Title;
+                post.Description = res.Description;
+                post.CateId = res.CatId;
+                post.OpenDate = DateTime.Now;
+                post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                
                 context.Posts.Add(post);
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Add new Post {post.Title}";
                 return RedirectToAction("Index");
             }
-            ViewCat();
-            return View(res);
+            return BadRequest();
+          
         }
 
-
+        public IActionResult Like(int id)
+        {
+            int count = 0;
+            var user = context.UserLikePosts.Where(x => x.Id == id).Select(x => new UserLikePost
+            {
+                UserId= x.UserId,
+                PostId= x.PostId,
+                Status = x.Status
+            }).ToList();
+            foreach(var l in user)
+            {
+                if(l.Status == true)
+                {
+                    count++;
+                }
+                else
+                {
+                    count--;
+                }
+            }
+            return View(count);
+        }
 
 
         public IActionResult EditPost(int id)
         {
-            var post = context.Posts.FirstOrDefault(p => p.Id == id);
+            var post = context.Posts.Where(u => u.Id == id).Select(u => new PostDTO
+            {
+                Id = id,
+                Title = u.Title,
+                Description = u.Description,
+                OpenDate = u.OpenDate,
+                CatId = u.CateId
+            }).FirstOrDefault();
             if (post == null)
             {
                 return RedirectToAction("Index");
             }
+            ViewCate();
             SelectedCat(id);
             return View(post);
         }
@@ -125,18 +163,15 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public IActionResult EditPost(PostDTO res)
         {
-            if (ModelState.IsValid)
+            var post = context.Posts.Find(res.Id);
+            if (post != null)
             {
-                var post = new Post
-                {
-                    Id = res.Id,
-                    Title = res.Title,
-                    Description = res.Description,
-                    OpenDate = res.OpenDate,
-                    ClosedDate = res.ClosedDate,
-                    UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                    CateId = res.CatId,
-                };
+                post.Id = res.Id;
+                post.Title = res.Title;
+                post.Description = res.Description;
+                post.OpenDate = res.OpenDate;
+                post.ClosedDate = res.ClosedDate;
+                post.CateId = res.CatId;
                 context.Entry(post).State = EntityState.Modified;
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Edit Post {post.Title}";

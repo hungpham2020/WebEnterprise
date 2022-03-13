@@ -20,7 +20,7 @@ namespace WebEnterprise.Models.DTO
 
         public string? CatName { get; set; }
 
-        public string? UserId { get; set; }
+        public string UserId { get; set; }
 
         public string? AuthorName { get; set; }
     }
