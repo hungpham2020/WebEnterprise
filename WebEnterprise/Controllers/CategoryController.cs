@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
+using WebEnterprise.Models.Common;
 
 namespace WebEnterprise.Controllers
 {
@@ -13,15 +14,31 @@ namespace WebEnterprise.Controllers
         {
             context = _context;
         }
-        public IActionResult Index()
+        public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
         {
-            var cats = (from c in context.Categories
-                        select new Category
-                        {
-                            Id = c.Id,
-                            Name = c.Name,
-                            Description = c.Description,
-                        }).ToList();
+            pageIndex = pageIndex ?? 1;
+            pageSize = pageSize ?? 10;
+            keyword = keyword ?? "";
+
+            var cats = from c in context.Categories
+                       select new Category
+                       {
+                           Id = c.Id,
+                           Name = c.Name,
+                           Description = c.Description,
+                       };
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                cats = cats.Where(c => c.Name.Contains(keyword));
+            }
+
+            var paging = new CommonPaging(cats.Count(), pageIndex, pageSize);
+
+            cats = cats.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+            
+            cats.ToList();
+
+            ViewBag.Paging = paging;
             return View(cats);
         }
 
@@ -39,7 +56,7 @@ namespace WebEnterprise.Controllers
                 context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return BadRequest();
+            return Content("Cannot Add");
         }
 
         public IActionResult EditCat(int id)

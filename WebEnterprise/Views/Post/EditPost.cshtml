@@ -19,27 +19,36 @@
                 </div>
             </div>
 
-            <br />
-
             <div class="col-md-6">
                 <div class="form-group">
                     <label class="form-label" for="dob">Category</label>
                     <br />
-                    @Html.DropDownListFor( p => p.CatId, (SelectList)ViewBag.Cat)
+                    @Html.DropDownListFor( p => p.CatId, (SelectList)ViewBag.Cat, htmlAttributes: new { @class = "form-control" })
                      <span asp-validation-for="CatName" class="text-danger"></span>
                 </div>
             </div>
 
-           
-
-
-            <br />
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label" for="Description">Description</label>
+                    <input asp-for="Description" type="text" class="form-control mb-2" id="Description" placeholder="Description">
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="form-label" for="Description"> Description</label>
-                    <input asp-for="Description" type="text" class="form-control mb-2" id="Description" placeholder="Description">
-                    <span asp-validation-for="Description" class="text-danger"></span>
+                    <label class="form-label" for="OpenDate">Open Date</label>
+                    <input asp-for="OpenDate" type="date" class="form-control mb-2 disabled" id="OpenDate" placeholder="OpenDate">
+                    <span asp-validation-for="OpenDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label" for="ClosedDate">Closed Date</label>
+                    <input asp-for="ClosedDate" type="date" class="form-control mb-2" id="ClosedDate" placeholder="ClosedDate">
+                    <span asp-validation-for="ClosedDate" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-12">

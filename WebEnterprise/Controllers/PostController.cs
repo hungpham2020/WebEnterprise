@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
+using WebEnterprise.Models.Common;
 using WebEnterprise.Models.DTO;
 
 namespace WebEnterprise.Controllers
@@ -57,20 +58,37 @@ namespace WebEnterprise.Controllers
             ViewBag.SelectedCat = new SelectList(cats, selectedCat);
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
         {
-            var posts = (from p in context.Posts
-                         join u in context.Users on p.UserId equals u.Id
-                         join c in context.Categories on p.CateId equals c.Id
-                         select new PostDTO
-                         {
-                             Id = p.Id,
-                             Title = p.Title,
-                             Description = p.Description,
-                             CatId = c.Id,
-                             CatName = c.Name,
-                             AuthorName =u.UserName,
-                         }).ToList();
+            pageIndex = pageIndex ?? 1;
+            pageSize = pageSize ?? 10;
+            keyword = keyword ?? "";
+
+            var posts = from p in context.Posts
+                        join u in context.Users on p.UserId equals u.Id
+                        join c in context.Categories on p.CateId equals c.Id
+                        select new PostDTO
+                        {
+                            Id = p.Id,
+                            Title = p.Title,
+                            Description = p.Description,
+                            CatId = c.Id,
+                            CatName = c.Name,
+                            AuthorName = u.UserName,
+                        };
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                posts = posts.Where(p => p.Title.Contains(keyword));
+            }
+
+            var paging = new CommonPaging(posts.Count(), pageIndex, pageSize);
+
+            posts = posts.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+            posts.ToList();
+
+            ViewBag.Paging = paging;
+
             ViewCat();
             return View(posts);
         }
@@ -106,6 +124,7 @@ namespace WebEnterprise.Controllers
                 post.Description = res.Description;
                 post.CateId = res.CatId;
                 post.OpenDate = DateTime.Now;
+                post.ClosedDate = post.OpenDate.AddDays(14);
                 post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 
                 context.Posts.Add(post);
@@ -113,8 +132,8 @@ namespace WebEnterprise.Controllers
                 TempData["message"] = $"Successfully Add new Post {post.Title}";
                 return RedirectToAction("Index");
             }
-            return BadRequest();
-          
+            return Content("Cannot Add");
+
         }
 
         public IActionResult Like(int id)
@@ -149,6 +168,7 @@ namespace WebEnterprise.Controllers
                 Title = u.Title,
                 Description = u.Description,
                 OpenDate = u.OpenDate,
+                ClosedDate = u.ClosedDate,
                 CatId = u.CateId
             }).FirstOrDefault();
             if (post == null)
@@ -161,7 +181,7 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditPost(PostDTO res)
+        public async Task<IActionResult> EditPost(PostDTO res)
         {
             var post = context.Posts.Find(res.Id);
             if (post != null)
@@ -172,6 +192,10 @@ namespace WebEnterprise.Controllers
                 post.OpenDate = res.OpenDate;
                 post.ClosedDate = res.ClosedDate;
                 post.CateId = res.CatId;
+
+                //string extension = Path.GetExtension(res.FileUpload.FileName);
+                //string newname = post.Title + extension;
+                //post.File = await FileControl.UploadFile(res.FileUpload, @"postFiles\", newname.ToLower());
                 context.Entry(post).State = EntityState.Modified;
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Edit Post {post.Title}";

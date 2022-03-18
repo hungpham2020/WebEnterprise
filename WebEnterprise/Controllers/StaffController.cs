@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
+using WebEnterprise.Models.Common;
 using WebEnterprise.Models.DTO;
 
 namespace WebEnterprise.Controllers
@@ -17,20 +18,37 @@ namespace WebEnterprise.Controllers
             userManager = _userManager;
             context = _context;
         }
-        public IActionResult Index()
+        public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
         {
-            var staff = (from u in context.Users
-                         join ur in context.UserRoles on u.Id equals ur.UserId
-                         join r in context.Roles on ur.RoleId equals r.Id
-                         where r.Name == "Staff"
-                         select new UserDTO
-                         {
-                             Id = u.Id,
-                             FullName = u.FullName,
-                             UserName = u.UserName,
-                             Email = u.Email,
-                         }).ToList();
-            return View(staff);
+            pageIndex = pageIndex ?? 1;
+            pageSize = pageSize ?? 10;
+            keyword = keyword ?? "";
+
+            var staffs = from u in context.Users
+                        join ur in context.UserRoles on u.Id equals ur.UserId
+                        join r in context.Roles on ur.RoleId equals r.Id
+                        where r.Name == "Staff"
+                        select new UserDTO
+                        {
+                            Id = u.Id,
+                            FullName = u.FullName,
+                            UserName = u.UserName,
+                            Email = u.Email,
+                        };
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                staffs = staffs.Where(p => p.FullName.Contains(keyword));
+            }
+
+            var paging = new CommonPaging(staffs.Count(), pageIndex, pageSize);
+
+            staffs = staffs.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+            staffs.ToList();
+
+            ViewBag.Paging = paging;
+
+            return View(staffs);
         }
 
         
@@ -53,7 +71,7 @@ namespace WebEnterprise.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            return BadRequest();
+            return Content("Cannot Add");
         }
 
         public IActionResult EditStaff(string id)
@@ -89,7 +107,7 @@ namespace WebEnterprise.Controllers
                 TempData["message"] = $"Successfully Edit Staff {staff.FullName}";
                 return RedirectToAction("Index");
             }
-            return BadRequest();
+            return View(res);
         }
 
         public IActionResult DeleteStaff(string id)

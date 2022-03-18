@@ -16,43 +16,49 @@
         <div class="nk-sidebar-content">
             <div class="nk-sidebar-menu" data-simplebar>
                 <ul class="nk-menu">
-                    <li class="nk-menu-item">
-                        <a asp-area="Admin" asp-controller="Home" asp-action="" class="nk-menu-link">
-                            <span class="nk-menu-icon"><em class="icon ni ni-dashboard-fill"></em></span>
-                            <span class="nk-menu-text">Dashboard</span>
-                        </a>
-                    </li><!-- .nk-menu-item -->
-                    <li class="nk-menu-item has-sub">
-                        <a asp-area="Assurance" asp-controller="Assurance" asp-action="Index" class="nk-menu-link">
-                            <span class="nk-menu-icon"><em class="icon ni ni-user-fill"></em></span>
-                            <span class="nk-menu-text">Assurance</span>
-                        </a>
-                    </li><!-- .nk-menu-item -->
-                    <li class="nk-menu-item has-sub">
-                        <a asp-area="Coordinator" asp-controller="Coordinator" asp-action="Index" class="nk-menu-link">
-                            <span class="nk-menu-icon"><em class="icon ni ni-user-fill"></em></span>
-                            <span class="nk-menu-text">Coordinator</span>
-                        </a>
-                    </li><!-- .nk-menu-item -->
-                    <li class="nk-menu-item">
-                        <a asp-area="Staff" asp-controller="Staff" asp-action="Index" class="nk-menu-link">
-                            <span class="nk-menu-icon"><em class="icon ni ni-users-fill"></em></span>
-                            <span class="nk-menu-text">Staff</span>
-                        </a>
-                    </li><!-- .nk-menu-item -->
-                    <li class="nk-menu-item has-sub">
-                        <a asp-area="Category" asp-controller="Category" asp-action="Index" class="nk-menu-link">
-                            <span class="nk-menu-icon"><i class="fas fa-chalkboard-teacher"></i></span>
-                            <span class="nk-menu-text">Category</span>
-                        </a>
-                    </li><!-- .nk-menu-item -->
-                    <li class="nk-menu-item">
-                        <a asp-area="Post" asp-controller="Post" asp-action="Index" class="nk-menu-link">
-                            <span class="nk-menu-icon"><i class="fas fa-star"></i></span>
-                            <span class="nk-menu-text">Post</span>
-                        </a>
-                    </li><!-- .nk-menu-item -->
-                    <!-- .nk-menu-item -->
+                    @if(User.IsInRole("Admin") || User.IsInRole("Assurance") || User.IsInRole("Coordinator"))
+                    {
+                        <li class="nk-menu-item">
+                            <a asp-controller="Dashboard" asp-action="Index" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-dashboard-fill"></em></span>
+                                <span class="nk-menu-text">Dashboard</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                    }
+                    @if(User.IsInRole("Admin"))
+                    {
+                        <li class="nk-menu-item has-sub">
+                            <a asp-area="Assurance" asp-controller="Assurance" asp-action="Index" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-user-fill"></em></span>
+                                <span class="nk-menu-text">Assurance</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item has-sub">
+                            <a asp-area="Coordinator" asp-controller="Coordinator" asp-action="Index" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-user-fill"></em></span>
+                                <span class="nk-menu-text">Coordinator</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item">
+                            <a asp-area="Staff" asp-controller="Staff" asp-action="Index" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-users-fill"></em></span>
+                                <span class="nk-menu-text">Staff</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item has-sub">
+                            <a asp-area="Category" asp-controller="Category" asp-action="Index" class="nk-menu-link">
+                                <span class="nk-menu-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                                <span class="nk-menu-text">Category</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item">
+                            <a asp-area="Post" asp-controller="Post" asp-action="Index" class="nk-menu-link">
+                                <span class="nk-menu-icon"><i class="fas fa-star"></i></span>
+                                <span class="nk-menu-text">Post</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <!-- .nk-menu-item -->
+                    }
                     <li class="nk-menu-heading">
                         <h6 class="overline-title text-primary-alt">Return to</h6>
                     </li><!-- .nk-menu-item -->

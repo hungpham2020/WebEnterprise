@@ -22,11 +22,13 @@ namespace WebEnterprise.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<CustomUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<CustomUser> userManager;
 
-        public LoginModel(SignInManager<CustomUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<CustomUser> signInManager, ILogger<LoginModel> logger, UserManager<CustomUser> _userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            userManager = _userManager;
         }
 
         /// <summary>
@@ -115,7 +117,7 @@ namespace WebEnterprise.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    return await RedirectByRole(Input.UserName);
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -137,9 +139,32 @@ namespace WebEnterprise.Areas.Identity.Pages.Account
             return Page();
         }
 
-        //private async Task<IActionResult> RedirecToRoles(string username)
-        //{
-        //    var user = await userManager
-        //}
+        private async Task<IActionResult> RedirectByRole(string userName)
+        {
+            var user = await userManager.FindByNameAsync(userName);
+            var roles = await userManager.GetRolesAsync(user);
+
+            foreach (var role in roles)
+            {
+                if (role == "Admin")
+                {
+                    return RedirectToAction("Index", "Assurance");
+                }
+                if (role == "Assurance")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                if (role == "Coordinator")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                if (role == "Staff")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            return Content("no");
+
+        }
     }
 }
