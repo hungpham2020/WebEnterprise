@@ -1,188 +1,107 @@
-﻿@model IEnumerable<WebEnterprise.Models.Post>
+﻿@model IEnumerable<WebEnterprise.Models.DTO.PostDTO>
 @{
     ViewData["Title"] = "Index";
-    Layout = "../Shared/_AdminLayout.cshtml";
+    Layout = "../Shared/_Layout.cshtml";
+}
+
+<h1>
+    this is post 
+</h1>
+
+@foreach(var item in Model)
+{
+    <div class="col-xxl-6">
+    <div class="card h-100">
+        <div class="card-inner">
+            <div class="card-title-group align-start gx-3 mb-3">
+                <div class="card-title">
+                    <h6 class="title">@Html.DisplayFor(modelItem => item.Title)</h6>
+
+                        <span class="tb-sub">
+                           @Html.DisplayFor(modelItem => item.UserId)
+                        </span>
+
+                    <p>@Html.DisplayFor(modelItem => item.OpenDate)</p>
+                </div>
+                <div class="card-tools">
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-toggle="dropdown"><em class="icon ni ni-download-cloud"></em><span><span class="d-none d-md-inline">Download</span> Report</span></a>
+                        <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-toggle="dropdown"><em class="icon ni ni-download-cloud"></em></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <ul class="link-list-opt no-bdr">
+                                <li><a href="#"><span>Download Mini Version</span></a></li>
+                                <li><a href="#"><span>Download Full Version</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
+               @*//-------------------------------------------------------------*@
+              
+                    <div class="nk-tb-col">
+                        <span class="tb-sub">
+                            <h8>
+                                @Html.DisplayFor(modelItem => item.Description)
+                                ------------------------------------------------------------
+                                #gre_cfs125752
+                                GẤP
+                                em chào ac ạ, em là 2k4 đang có quan tâm đến Greenwich, mong là các vị tiền có thể giải đáp giúp em một số câu hỏi sau chứ em giờ đang rối bời lắm ạ :(( 
+                                1, học truyền thông tại Greenwich so với các trường công khác (như ajc, hanu, xhnv,..) thế nào ạ?
+                                2, em tham khảo thấy học phí ở cơ sở ĐN, CT được giảm 30%, cho em hỏi là học tại các campus khác nhau thì có gì khác mà lại chênh giá thế ạ?
+                                3, marketing và truyền thông thì nên theo ngành nào tốt hơn ạ?
+                                4, ngoài học bổng đầu vào ra trong quá trình học liệu có cơ hội để lấy học bổng k ạ?
+                                5, em xin review của các tiền bối về chất lượng giảng dạy và quá trình học tập ở G đc k ạ :((
+                                6, trong quá trình học có cơ hội để apply nhận cv thực tập k ạ
+                                7, bao nhiêu ielts thì được miễn học lớp dự bị tiếng anh thế ạ?
+                                Hic em mong là mng có thể giải đáp giúp em ạ, em cảm ơn ac rất rất nhiều ạaa 🥰🥰
+                            </h8>
+                            @*@Html.DisplayFor(modelItem => item.Description)*@
+                        </span>
+                    </div>
+
+                    @*----------------------------------------------------------*@
+                    
+                @*
+                <div class="nk-sale-data">
+                    <span class="amount sm">1,937 <small>Subscribers</small></span>
+                </div>*@
+          
+        </div>
+    </div><!-- .card -->
+</div><!-- .col -->
+@*-----------Like and comment-------------*@
+
+<table>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">  
+          <button type="button" >
+                Like
+           </button>
+      </th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>        <th scope="col">
+        <button href"">
+            @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
+        </button>
+      </th>
+  </tr>
+</table>
+</div>
 }
 
 
-<!DOCTYPE html>
-<html lang="zxx" class="js">
-<body class="nk-body bg-lighter npc-general has-sidebar ">
 
 
-    <!-- main header  -->
-    <!-- main header  -->
-    <!-- content  -->
-    <div class="nk-content ">
-        <div class="container-fluid">
-            <div class="nk-content-inner">
-                <div class="nk-content-body">
-                    <div class="nk-block-head nk-block-head-sm">
-                        <div class="nk-block-between">
-                            <div class="nk-block-head-content">
-                                <h3 class="nk-block-title page-title">Post</h3>
-                            </div><!-- .nk-block-head-content -->
-                            <div class="nk-block-head-content">
-                                <div class="toggle-wrap nk-block-tools-toggle">
-                                    <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
-                                    <div class="toggle-expand-content" data-content="pageMenu">
-                                        <ul class="nk-block-tools g-3">
-                                            <li>
-                                                <div class="form-control-wrap">
-                                                    <div class="form-icon form-icon-right">
-                                                        <em class="icon ni ni-search"></em>
-                                                    </div>
-                                                    <input type="text" class="form-control" id="default-04" placeholder="Quick search by id">
-                                                </div>
-                                            </li>
-                                            <li class="nk-block-tools-opt">
-                                                <a data-target="addpost" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
-                                                <a data-target="addpost" class="toggle btn btn-primary d-none d-md-inline-flex" style=" color:white"><em class="icon ni ni-plus"></em><span>Add Post</span></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div><!-- .nk-block-head-content -->
-                        </div><!-- .nk-block-between -->
-                    </div><!-- .nk-block-head -->
-                    <div class="nk-block">
-                        <div class="card card-bordered">
-                            <div class="card-inner-group">
-                                <div class="card-inner p-0">
-                                    <div class="nk-tb-list">
-                                        <div class="nk-tb-item nk-tb-head">
-                                            <div class="nk-tb-col tb-col-sm"><span>Title</span></div>
-                                            <div class="nk-tb-col tb-col-md"><span>Description</span></div>
-                                            <div class="nk-tb-col tb-col-md"><span>Author</span></div>
-                                            <div class="nk-tb-col tb-col-md"><span>Like</span></div>
-
-                                            <div class="nk-tb-col tb-col-md">
-                                                <ul class="nk-tb-actions gx-1 my-n1">
-
-                                                    <li class="mr-n1">
-                                                        <div><span>Action</span></div>
-                                                    </li>
-
-                                                </ul>
-                                            </div>
-
-                                        </div><!-- .nk-tb-item -->
-                                        @foreach (var item in Model)
-                                        {
-                                            <div class="nk-tb-item">
-                                                <div class="nk-tb-col">
-                                                    <span class="tb-lead">
-                                                        @Html.DisplayFor(modelItem => item.Title)
-                                                    </span>
-                                                </div>
-
-                                                <div class="nk-tb-col">
-                                                    <span class="tb-lead">
-                                                        @Html.DisplayFor(modelItem => item.Description)
-                                                    </span>
-                                                </div>
-
-
-                                                <div class="nk-tb-col">
-                                                    <span class="tb-sub">
-                                                        @Html.DisplayFor(modelItem => item.UserId)
-                                                    </span>
-                                                </div>
-
-                                                <div class= "nk-tb-col">
-                                                   <div class="fb-like" data-href="" data-width="" data-layout="button_count" data-action="Like" data-size="large" data-share="false"></div>
-                                                </div>
-                                                
-                                                <div class="nk-tb-col nk-tb-col-tools">
-                                                    <ul class="nk-tb-actions gx-1 my-n1">
-                                                        <li class="mr-n1">
-                                                            <div class="dropdown">
-                                                                <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <ul class="link-list-opt no-bdr">
-                                                                        <li><span>@Html.ActionLink("Edit", "EditPost", new { id = item.Id })</span></li>
-                                                                        <li><span>@Html.ActionLink("Delete", "DeletePost", new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <!-- .nk-tb-item -->
-                                        }
-
-
-                                    </div><!-- .nk-tb-list -->
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-                    <form method="post" asp-action="AddPost" asp-controller="Post">
-                        <div class="nk-add-product toggle-slide toggle-slide-right" data-content="addpost" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
-                            <div class="nk-block-head">
-                                <div class="nk-block-head-content">
-                                    <h5 class="nk-block-title">New Post</h5>
-                                    <div class="nk-block-des">
-                                        <p>Add Post Status.</p>
-                                    </div>
-                                </div>
-                            </div><!-- .nk-block-head -->
-
-
-
-                            <div class="nk-block">
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label class="form-label" for="Email">Title</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" class="form-control" name="Title">
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="btn-group">
-                                        <button class="btn btn-outline-dark btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Category
-                                        </button>
-                                        <div class="dropdown-menu">
-
-                                        
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label class="form-label" for="Description">Description</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" class="form-control" name="Description">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- content  -->
-
-</body>
-</html>
-
-
+@section Scripts{
+    <script type="text/javascript">
+      $(function() {
+        $( "i" ).click(function() {
+          $( "i,span" ).toggleClass( "press", 1000 );
+        });
+      });
+    </script>
+} 
