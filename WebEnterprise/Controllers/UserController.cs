@@ -30,7 +30,7 @@ namespace WebEnterprise.Controllers
                              Description = p.Description,
                              CatId = c.Id,
                              CatName = c.Name,
-                             AuthorName = u.UserName,
+                             AuthorName = u.FullName,
                          }).ToList();
             return View(posts);
 
@@ -38,41 +38,35 @@ namespace WebEnterprise.Controllers
 
 
         [HttpPost]
-        public IActionResult Comment(Comment c, IFormCollection f)
-        {
-            var p = Convert.ToInt32(f["PostId"]);
-            Post post = context.Posts.Where(u => u.Id == p).FirstOrDefault();
-            CustomUser user = context.Users.Where(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier)).FirstOrDefault();
+        //public IActionResult Comment(Comment c, IFormCollection f)
+        //{
+        //    var p = Convert.ToInt32(f["PostId"]);
+        //    Post post = context.Posts.Where(u => u.Id == p).FirstOrDefault();
+        //    CustomUser user = context.Users.Where(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier)).FirstOrDefault();
 
-            var comment = new Comment();
-            comment.Description = c.Description;
-            comment.Post = post;
-            comment.UpdateTime = DateTime.Now;
-            comment.CustomUser = user;
+        //    var comment = new Comment();
+        //    comment.Description = c.Description;
+        //    comment.Post = post;
+        //    comment.UpdateTime = DateTime.Now;
+        //    comment.CustomUser = user;
 
-            context.Comments.Add(comment);
-            context.SaveChanges();
-            return RedirectToAction("ShowComment");
-        }
+        //    context.Comments.Add(comment);
+        //    context.SaveChanges();
+        //    return RedirectToAction("ShowComment");
+        //}
 
         public IActionResult ShowComment(int id)
         {
-            var post = context.Posts.Where(u => u.Id == id).Select(u => new PostDTO
-            {
-                Id = id,
-                Title = u.Title,
-                Description = u.Description
-            }).FirstOrDefault();
             var comments = (from p in context.Posts
-                            join c in context.Comments
-                            on post.Id equals c.Post.Id
-                            select new Comment
+                            join c in context.Comments on p.Id equals c.PostId
+                            where c.PostId == id
+                            select new CommentDTO
                             {
-                                Id = c.Id,
+                                CommentId = c.Id,
                                 UpdateTime = c.UpdateTime,
-                                CustomUser = c.CustomUser,
                                 Description = c.Description,
-                                Post = c.Post,
+                                PostDescription = p.Description,
+                                PostId = id,
                             }).ToList();
             return View(comments);
         }
