@@ -1,0 +1,58 @@
+﻿@model WebEnterprise.Models.DTO.PostDTO
+
+<div class="modal-content">
+    <div class="modal-body modal-body-md">
+        <h5 class="title">Edit Post</h5>
+        <form asp-action="EditPost" method="post" class="pt-2" enctype="multipart/form-data">
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label" for="Title">Title</label>
+                    <input asp-for="Title" type="text" class="form-control mb-2" id="Title" placeholder="Title">
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label" for="dob">Category</label>
+                    <br />
+                    @Html.DropDownListFor( p => p.CatId, (SelectList)ViewBag.Cat, htmlAttributes: new { @class = "form-control" })
+                     <span asp-validation-for="CatName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label" for="Description">Description</label>
+                    <input asp-for="Description" type="text" class="form-control mb-2" id="Description" placeholder="Description">
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label" for="OpenDate">Open Date</label>
+                    <input asp-for="OpenDate" type="date" class="form-control mb-2 disabled" id="OpenDate" placeholder="OpenDate">
+                    <span asp-validation-for="OpenDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label" for="ClosedDate">Closed Date</label>
+                    <input asp-for="ClosedDate" type="date" class="form-control mb-2" id="ClosedDate" placeholder="ClosedDate">
+                    <span asp-validation-for="ClosedDate" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                    <li>
+                        <button class="btn btn-primary">Edit Post</button>
+                    </li>
+                </ul>
+            </div>
+
+        </form>
+    </div><!-- .modal-body -->
+</div>

@@ -3,10 +3,49 @@
     ViewData["Title"] = "Index";
     Layout = "../Shared/_Layout.cshtml";
 }
+@{
+    List<int> selectedids = new List<int>();
+    if (TempData["CatIds"] != null)
+    {
+        selectedids = TempData["CatIds"].ToString().Split(',')
+        .Select(id => Int32.Parse(id)).ToList();
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {background-color: GrayText;}
+h1   {color: beige;}
+p    {color: red;}
+.Add{
+    margin-left: 80%;
+    display:inline-grid;
+    margin-bottom: 1%;
+
+}
+</style>
+</head>
 
 <h1>
     this is post 
 </h1>
+<div class="nk-content ">
+
+      <div class="Add">
+         <li class="nk-block-tools-opt">
+            <a data-target="addpost" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+            <a data-target="addpost" class="toggle btn btn-info " style=" color:white"><em class="icon ni ni-plus"></em><span>Add Post</span></a>
+         </li>
+      </div>
+
+        <div class="container-fluid">
+            <div class="nk-content-inner">
+     
+                <div class="nk-content-body">
+
+
 
 @foreach(var item in Model)
 {
@@ -18,7 +57,7 @@
                     <h6 class="title">@Html.DisplayFor(modelItem => item.Title)</h6>
 
                         <span class="tb-sub">
-                           @Html.DisplayFor(modelItem => item.UserId)
+                           @Html.DisplayFor(modelItem => item.AuthorName)
                         </span>
 
                     <p>@Html.DisplayFor(modelItem => item.OpenDate)</p>
@@ -70,9 +109,12 @@
           
         </div>
     </div><!-- .card -->
-</div><!-- .col -->
-@*-----------Like and comment-------------*@
+   
 
+<div id="Placeholder"></div>
+
+@*-----------Like and comment-------------*@
+<center>
 <table>
     <tr>
       <th scope="col"></th>
@@ -83,18 +125,131 @@
       </th>
       <th scope="col"></th>
       <th scope="col"></th>
-      <th scope="col"></th>        <th scope="col">
+      <th scope="col"></th>        
+      <th scope="col">
         <button href"">
             @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
         </button>
       </th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th> 
+    <th>
+         <button href"">
+            @Html.ActionLink("Edit", "EditPost" ,new { id = item.Id })
+        </button>
+
+    </th>
+     <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th> 
+    <th>
+        <button href"">
+            @Html.ActionLink("Delete", "DeletePost" ,new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})
+        </button>
+    </th>
   </tr>
 </table>
+</center>
+
+</div><!-- .col -->
+
+<table>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>        
+      <th scope="col"></th>
+  </tr>
+</table>
+
 </div>
 }
 
 
+<form method="post" asp-action="AddPost" asp-controller="User">
+    <div class="nk-add-product toggle-slide toggle-slide-right" data-content="addpost" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
+        <div class="nk-block-head">
+            <div class="nk-block-head-content">
+                <h5 class="nk-block-title">New Post</h5>
+                <div class="nk-block-des">
+                    <p>Add Post Status.</p>
+                </div>
+            </div>
+        </div><!-- .nk-block-head -->
 
+
+
+        <div class="nk-block">
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label" for="Email">Title</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control" name="Title">
+                        </div>
+                    </div>
+                </div>
+                   
+
+                <div class="btn-group">
+                    <button class="btn btn-outline-dark btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Category
+                    </button>
+                    <div class="dropdown-menu">
+
+                        @foreach (var r in ViewBag.Cat)
+                        {
+                            <li class="nk-menu-item has-sub">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio"
+                                        value="@r.Id" id="@r.Name" name="CatIds"
+                                        @(selectedids.Contains(r.Id) ? "checked" : string.Empty) />
+                                    <label class="form-check-label" for="@r.Name">
+                                        @r.Name
+                                    </label>
+                                </div>
+                            </li>
+                        }
+
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label" for="Description">Description</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control" name="Description">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    
 
 @section Scripts{
     <script type="text/javascript">
