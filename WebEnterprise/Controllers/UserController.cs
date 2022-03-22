@@ -230,6 +230,44 @@ namespace WebEnterprise.Controllers
             TempData["message"] = $"Can not delete post {post.Title}, cause you are not owner!";
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public IActionResult Like([FromBody] UserLikePost req)
+        {
+            var userPost = context.UserLikePosts.Where(u => u.UserId == req.UserId && u.PostId == req.PostId && u.Status == true).FirstOrDefault();
+            if (userPost == null)
+            {
+                var userLike = new UserLikePost
+                {
+                    UserId = req.UserId,
+                    PostId = req.PostId,
+                    Status = true,
+                };
+                context.Add(userLike);
+                context.SaveChanges();
+                return Json(userLike);
+            }
+            return null;
+        }
+
+        [HttpPost]
+        public IActionResult DisLike([FromBody] UserLikePost req)
+        {
+            var userPost = context.UserLikePosts.Where(u => u.UserId == req.UserId && u.PostId == req.PostId && u.Status == false).FirstOrDefault();
+            if(userPost == null)
+            {
+                var userLike = new UserLikePost
+                {
+                    UserId = req.UserId,
+                    PostId = req.PostId,
+                    Status = false,
+                };
+                context.Add(userLike);
+                context.SaveChanges();
+                return Json(userLike);
+            }
+            return null;
+        }
     }
 }
 
