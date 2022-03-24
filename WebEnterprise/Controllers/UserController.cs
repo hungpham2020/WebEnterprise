@@ -121,10 +121,24 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditComment(int id)
+        public IActionResult EditComment(int PostId, string Description, int CommentId)
         {
-            return View();
+            var comment = context.Comments.Find(CommentId);
+            if (comment.AuthorId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            {
+                comment.UpdateTime = DateTime.Now;
+                comment.Description = Description;
+                comment.PostId = PostId;
+                context.Entry(comment).State = EntityState.Modified;
+                context.SaveChanges();
+                TempData["message"] = $"Successfully Edit Comment";
+                return RedirectToAction("ShowComment", new { id = comment.PostId });
+            }
+            TempData["message"] = $"Cannot Edit Comment";
+            return RedirectToAction("ShowComment", new { id = PostId });
         }
+
+
 
         public IActionResult DeleteComment(int id)
         {

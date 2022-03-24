@@ -3,7 +3,7 @@
 
 <html lang="zxx" class="js">
 <body class="nk-body bg-lighter npc-general has-sidebar ">
-  
+
 
     <!-- main header  -->
     <!-- main header  -->
@@ -13,87 +13,88 @@
             <div class="nk-content-inner">
                 <div class="nk-content-body">
 
-                          
 
 
-                  <center>
+
+                    <center>
                         @foreach (var item in Model)
-                    {
-                        <div class="nk-tb-item">
+                        {
+                            <div class="nk-tb-item">
 
-                            <div class="nk-tb-col">
-                                <span class="tb-sub">
-                                    @Html.DisplayFor(modelItem => item.Description)
-                                </span>
+                                <div class="nk-tb-col">
+                                    <span class="tb-sub">
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </span>
+                                </div>
+
+                                <div class="nk-tb-col">
+                                    <span class="tb-sub">
+                                        @Html.DisplayFor(modelItem => item.AuthorName)
+                                    </span>
+                                </div>
+
+
+                                <div class="nk-tb-col nk-tb-col-tools">
+                                    <ul class="nk-tb-actions gx-1 my-n1">
+                                        <li class="mr-n1">
+                                            <div class="dropdown">
+                                                <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        <li>
+                                                            <span class="toggle" data-target="editComment" data-comment="@String.Format("{0}|{1}",
+                                                            item.ToSeparatedString("|"), Url.Action("EditComment",new { id = item.CommentId}))">@Html.ActionLink("Edit", "EditComment")</span>
+                                                        </li>
+                                                        <li><span>@Html.ActionLink("Delete", "DeleteComment", new { id = item.CommentId }, new {onClick = "return confirm('Are you sure?')"})</span></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
+                            <!-- .nk-tb-item -->
+                        }
+                    </center>
 
-                            <div class="nk-tb-col">
-                                <span class="tb-sub">
-                                    @Html.DisplayFor(modelItem => item.AuthorName)
-                                </span>
-                            </div>
+                    <center><a data-target="comment" class="toggle btn btn-secondary d-none d-md-inline-flex" style="color:white" }>Comment</a></center>
 
 
-                            <div class="nk-tb-col nk-tb-col-tools">
-                                <ul class="nk-tb-actions gx-1 my-n1">
-                                    <li class="mr-n1">
-                                        <div class="dropdown">
-                                            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul class="link-list-opt no-bdr">
-                                                    <li><span class="toggle" data-target="editComment">@Html.ActionLink("Edit", "EditComment", new { id = item.CommentId })</span></li>
+                    <form id="editComment" method="post" asp-action="EditComment" asp-controller="User">
+                        <div class="nk-add-product toggle-slide toggle-slide-right" data-content="editComment" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
+                            <div class="nk-block-head">
+                                <div class="nk-block-head-content">
+                                    <h5 class="nk-block-title">New Post</h5>
+                                    <div class="nk-block-des">
+                                        <p>Add Post Status.</p>
+                                    </div>
+                                </div>
+                            </div><!-- .nk-block-head -->
 
-                                                    <li><span>@Html.ActionLink("Delete", "DeleteComment", new { id = item.CommentId }, new {onClick = "return confirm('Are you sure?')"})</span></li>
-                                                </ul>
+                            <div class="nk-block">
+                                <div class="row g-3">
+
+
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="form-label" for="Description">Description</label>
+                                            <div class="form-control-wrap">
+                                                <input type="text" id="Description" class="form-control" name="Description">
                                             </div>
                                         </div>
-                                    </li>
-                                </ul>
+                                    </div>
+
+                                    <input type="hidden" id="PostId" class="form-control" name="PostId">
+                                    <input type="hidden" id="CommentId" class="form-control" name="CommentId">
+
+                                    <div class="col-12">
+                                        <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <!-- .nk-tb-item -->
-                    }
-                  </center>
+                    </form>
 
-                 <center><a data-target="comment" class="toggle btn btn-secondary d-none d-md-inline-flex"  style="color:white"}>Comment</a></center>
-
-                 @*<center><a data-target="comment" class="toggle btn btn-secondary d-none d-md-inline-flex" style=" color:white">Comment</a></center>*@
-
-
-
-<form method="post" asp-action="EditComment" asp-controller="User">
-    <div class="nk-add-product toggle-slide toggle-slide-right" data-content="editComment" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
-        <div class="nk-block-head">
-            <div class="nk-block-head-content">
-                <h5 class="nk-block-title">New Post</h5>
-                <div class="nk-block-des">
-                    <p>Add Post Status.</p>
-                </div>
-            </div>
-        </div><!-- .nk-block-head -->
-
-
-
-        <div class="nk-block">
-            <div class="row g-3">
-              
-
-                <div class="col-12">
-                    <div class="form-group">
-                        <label class="form-label" for="Description">Description</label>
-                        <div class="form-control-wrap">
-                            <input type="text" class="form-control" name="Description">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
 
 
                 </div>
@@ -103,3 +104,21 @@
 
 </body>
 </html>
+
+
+@section scripts
+    {
+<script type="text/javascript">
+    $('document').ready(function() {
+        $('span[data-comment]').on('click', function (evt) {
+            let item = $(this).attr('data-comment').split("|");
+            console.log(item);
+            $('#Description').attr('value', item[0]);
+            $('#PostId').attr('value', item[1]);
+            $('#CommentId').attr('value', item[2]);
+            $('#EditComment').attr('action', item[3]);
+        });
+    });
+
+</script>
+}

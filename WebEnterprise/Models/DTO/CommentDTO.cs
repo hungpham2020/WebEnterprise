@@ -15,5 +15,12 @@ namespace WebEnterprise.Models.DTO
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? UpdateTime{ get; set; }
+
+        public string ToSeparatedString(string r)
+        {
+            return $"{this.Description}{r}" +
+                    $"{this.PostId}{r}" +
+                    $"{this.CommentId}";
+        }
     }
 }
