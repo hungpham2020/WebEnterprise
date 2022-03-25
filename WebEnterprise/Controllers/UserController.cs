@@ -84,6 +84,14 @@ namespace WebEnterprise.Controllers
         }
 
 
+        public IActionResult UserWall()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            return View();
+        }
+
+
         [HttpPost]
         public IActionResult Comment(CommentDTO c)
         {
@@ -163,22 +171,26 @@ namespace WebEnterprise.Controllers
             {
                 res.CatId = c.Id;
             }
-            if (!ModelState.IsValid)
-            {
-                var post = new Post();
-                post.Title = res.Title;
-                post.Description = res.Description;
-                post.CateId = res.CatId;
-                post.OpenDate = DateTime.Now;
-                post.ClosedDate = post.OpenDate.AddDays(14);
-                post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+              if(res.CatId != 0)
+                {
+                    if (!ModelState.IsValid)
+                    {
+                        var post = new Post();
+                        post.Title = res.Title;
+                        post.Description = res.Description;
+                        post.CateId = res.CatId;
+                        post.OpenDate = DateTime.Now;
+                        post.ClosedDate = post.OpenDate.AddDays(14);
+                        post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                context.Posts.Add(post);
-                context.SaveChanges();
-                TempData["message"] = $"Successfully Add new Post {post.Title}";
-                return RedirectToAction("Index");
+                        context.Posts.Add(post);
+                        context.SaveChanges();
+                        TempData["message"] = $"Successfully Add new Post {post.Title}";
+                        return RedirectToAction("Index");
+                    }
             }
-            return Content("Cannot Add");
+            TempData["message"] = $"Cannot Add this Post";
+            return RedirectToAction("Index");
 
         }
         
