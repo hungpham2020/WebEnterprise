@@ -1,8 +1,15 @@
 ﻿@model IEnumerable<WebEnterprise.Models.DTO.CommentDTO>
-
-
 <html lang="zxx" class="js">
+
+<div class="style">
+@if (TempData["message"] != null)
+{
+    ViewBag.Message = TempData["message"];
+}
+@Html.Partial("_Message")
+</div>
 <body class="nk-body bg-lighter npc-general has-sidebar ">
+
 
 
     <!-- main header  -->
@@ -58,6 +65,48 @@
                     </center>
 
                     <center><a data-target="comment" class="toggle btn btn-secondary d-none d-md-inline-flex" style="color:white" }>Comment</a></center>
+
+
+                    
+                    <form id="comment" method="post" asp-action="Comment" asp-controller="User">
+                        <div class="nk-add-product toggle-slide toggle-slide-right" data-content="comment" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
+                            <div class="nk-block-head">
+                                <div class="nk-block-head-content">
+                                    <h5 class="nk-block-title">New Post</h5>
+                                    <div class="nk-block-des">
+                                        <p>Add Post Status.</p>
+                                    </div>
+                                </div>
+                            </div><!-- .nk-block-head -->
+
+
+
+                            <div class="nk-block">
+                                <div class="row g-3">
+                                  
+                                     <input type="hidden" class="form-control" name="PostId" value="@ViewBag.PostID">
+                                   
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="form-label" for="Description">Description</label>
+                                            <div class="form-control-wrap">
+                                                <input type="text" class="form-control" name="Description">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <button class="btn btn-primary" ><em class="icon ni ni-plus"></em><span>Add</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
                     <form id="editComment" method="post" asp-action="EditComment" asp-controller="User">

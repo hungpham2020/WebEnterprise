@@ -4,6 +4,8 @@
     ViewData["Title"] = "Index";
     Layout = "../Shared/_Layout.cshtml";
 }
+
+
 @{
     List<int> selectedids = new List<int>();
     if (TempData["CatIds"] != null)
@@ -41,7 +43,18 @@
 <h1>
     this is post
 </h1>
+
 <div class="nk-content ">
+    <div class="style">
+@if (TempData["message"] != null)
+{
+    ViewBag.Message = TempData["message"];
+}
+@Html.Partial("_Message")
+</div>
+<br />
+    
+
 
     <div class="Add">
         <li class="nk-block-tools-opt">

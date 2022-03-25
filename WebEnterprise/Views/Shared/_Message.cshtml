@@ -1,17 +1,7 @@
 ﻿@if (ViewBag.Message != null)
 {
-    <div class="alert alert-success alert fade show" role="alert">
+    <div class="alert alert-success alert fade show" role="alert" align="center">
         @ViewBag.Message
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    
-}
-@if (ViewBag.Error != null)
-{
-    <div class="alert alert-danger alert fade show" role="alert">
-        @ViewBag.Error
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
