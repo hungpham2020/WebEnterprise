@@ -32,16 +32,14 @@
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="form-label" for="OpenDate">Open Date</label>
-                    <input asp-for="OpenDate" type="date" class="form-control mb-2 disabled" id="OpenDate" placeholder="OpenDate">
+                    <input asp-for="OpenDate" type="hidden" class="form-control mb-2 disabled" id="OpenDate" placeholder="OpenDate">
                     <span asp-validation-for="OpenDate" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="form-label" for="ClosedDate">Closed Date</label>
-                    <input asp-for="ClosedDate" type="date" class="form-control mb-2" id="ClosedDate" placeholder="ClosedDate">
+                    <input asp-for="ClosedDate" type="hidden" class="form-control mb-2" id="ClosedDate" placeholder="ClosedDate">
                     <span asp-validation-for="ClosedDate" class="text-danger"></span>
                 </div>
             </div>

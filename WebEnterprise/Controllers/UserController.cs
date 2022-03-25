@@ -74,6 +74,7 @@ namespace WebEnterprise.Controllers
                              Id = p.Id,
                              Title = p.Title,
                              Description = p.Description,
+                             OpenDate = p.OpenDate,
                              CatId = c.Id,
                              CatName = c.Name,
                              AuthorName = u.FullName,

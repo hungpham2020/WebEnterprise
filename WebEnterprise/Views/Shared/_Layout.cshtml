@@ -35,6 +35,10 @@
                         @if (User.IsInRole("Admin") || User.IsInRole("Assurance") || User.IsInRole("Coordinator"))
                         {
                             <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="UserWall">Your Posts</a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">View Statistics</a>
                             </li>
                         }
