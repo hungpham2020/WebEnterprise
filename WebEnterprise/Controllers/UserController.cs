@@ -88,8 +88,22 @@ namespace WebEnterprise.Controllers
         public IActionResult UserWall()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            return View();
+            var posts = (from p in context.Posts 
+                        join u in context.Users
+                        on p.UserId equals u.Id
+                        join c in context.Categories on p.CateId equals c.Id
+                        where u.Id == id
+                        select new PostDTO
+                        {
+                            Id = p.Id,
+                            Title = p.Title,
+                            Description= p.Description,
+                            OpenDate = p.OpenDate,
+                            CatId = c.Id,
+                            AuthorName = u.FullName
+                        }).ToList();
+            ViewCat();
+            return View(posts);
         }
 
 
