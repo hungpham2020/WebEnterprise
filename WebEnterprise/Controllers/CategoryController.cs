@@ -103,6 +103,7 @@ namespace WebEnterprise.Controllers
                              description = n.description,
                              date = n.date
                          }).ToList();
+            notes.OrderByDescending(c => c.date).Take(5).ToList();
             ViewBag.Not = notes;
         }
     }

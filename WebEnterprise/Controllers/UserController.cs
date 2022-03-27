@@ -293,9 +293,12 @@ namespace WebEnterprise.Controllers
         public IActionResult DeletePost(int id)
         {
             var post = context.Posts.FirstOrDefault(p => p.Id == id);
+            var user = context.Users.FirstOrDefault(u => u.Id == post.UserId);
+            var note = context.Notifications.FirstOrDefault(p => p.description.Contains($"{user.UserName} add new post {post.Title}"));
             if (post.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
                 context.Remove(post);
+                context.Remove(note);
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Delete Post {post.Title}";
                 return RedirectToAction("UserWall");
@@ -351,6 +354,7 @@ namespace WebEnterprise.Controllers
                              description = n.description,
                              date = n.date
                          }).ToList();
+            notes.OrderByDescending(c => c.date).Take(5).ToList();
             ViewBag.Not = notes;
         }
 

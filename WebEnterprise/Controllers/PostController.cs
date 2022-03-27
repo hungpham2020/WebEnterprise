@@ -233,8 +233,11 @@ namespace WebEnterprise.Controllers
         public IActionResult DeletePost(int id)
         {
             var post = context.Posts.FirstOrDefault(p => p.Id == id);
-            if(post != null)
+            var user = context.Users.FirstOrDefault(u => u.Id == post.UserId);
+            var note = context.Notifications.FirstOrDefault(p => p.description.Contains($"{user.UserName} add new post {post.Title}"));
+            if (post != null)
             {
+                context.Remove(note);
                 context.Remove(post);
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Delete Post {post.Title}";
@@ -251,6 +254,7 @@ namespace WebEnterprise.Controllers
                              description = n.description,
                              date = n.date
                          }).ToList();
+            notes.OrderByDescending(c => c.date).Take(5).ToList();
             ViewBag.Not = notes;
         }
     }
