@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebEnterprise.Data;
+using WebEnterprise.Models;
 using WebEnterprise.Models.DTO;
 
 namespace WebEnterprise.Controllers
@@ -29,8 +31,20 @@ namespace WebEnterprise.Controllers
             ViewBag.Lastest = lastest;
         }
 
+        private void Notifiation()
+        {
+            var notes = (from n in context.Notifications
+                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         select new Notification
+                         {
+                             description = n.description,
+                             date = n.date
+                         }).ToList();
+            ViewBag.Not = notes;
+        }
         public IActionResult Index()
         {
+            Notifiation();
             ViewLastest();
             return View();
         }

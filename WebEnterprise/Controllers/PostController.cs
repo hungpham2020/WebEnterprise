@@ -88,7 +88,7 @@ namespace WebEnterprise.Controllers
             posts.ToList();
 
             ViewBag.Paging = paging;
-
+            Notifiation();
             ViewCat();
             return View(posts);
         }
@@ -106,6 +106,7 @@ namespace WebEnterprise.Controllers
                              OpenDate = p.OpenDate,
                              ClosedDate = p.ClosedDate,
                          }).ToList();
+            Notifiation();
             return View(posts);
         }
 
@@ -113,26 +114,49 @@ namespace WebEnterprise.Controllers
         public IActionResult AddPost(PostDTO res, IFormCollection f)
         {
             var cat = LoadCat(f["CatIds"]);
-            foreach(var c in cat)
+            foreach (var c in cat)
             {
                 res.CatId = c.Id;
             }
-            if (!ModelState.IsValid)
+            if (res.CatId != 0)
             {
-                var post = new Post();
-                post.Title = res.Title;
-                post.Description = res.Description;
-                post.CateId = res.CatId;
-                post.OpenDate = DateTime.Now;
-                post.ClosedDate = post.OpenDate.AddDays(14);
-                post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                
-                context.Posts.Add(post);
-                context.SaveChanges();
-                TempData["message"] = $"Successfully Add new Post {post.Title}";
-                return RedirectToAction("Index");
+                if (!ModelState.IsValid)
+                {
+                    var post = new Post();
+                    post.Title = res.Title;
+                    post.Description = res.Description;
+                    post.CateId = res.CatId;
+                    post.OpenDate = DateTime.Now;
+                    post.ClosedDate = post.OpenDate.AddDays(14);
+                    post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    var note = new Notification();
+                    var user = (from u in context.Users
+                                where u.Id == post.UserId
+                                select new CustomUser
+                                {
+                                    Id = u.Id,
+                                    FullName = u.FullName,
+                                    UserName = u.UserName
+                                }).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        note.description = $"{user.UserName} add new post {post.Title}";
+                        note.date = DateTime.Now;
+                        note.UserId = post.UserId;
+
+                        context.Posts.Add(post);
+                        context.Notifications.Add(note);
+                        context.SaveChanges();
+
+                        TempData["message"] = $"Successfully Add new Post {post.Title}";
+                        return RedirectToAction("Index");
+                    }
+                }
             }
-            return Content("Cannot Add");
+            TempData["message"] = $"Cannot Add this Post";
+            return RedirectToAction("Index");
 
         }
 
@@ -177,6 +201,7 @@ namespace WebEnterprise.Controllers
             }
             ViewCate();
             SelectedCat(id);
+            Notifiation();
             return View(post);
         }
 
@@ -215,6 +240,18 @@ namespace WebEnterprise.Controllers
                 TempData["message"] = $"Successfully Delete Post {post.Title}";
             }
             return RedirectToAction("Index");
+        }
+
+        private void Notifiation()
+        {
+            var notes = (from n in context.Notifications
+                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         select new Notification
+                         {
+                             description = n.description,
+                             date = n.date
+                         }).ToList();
+            ViewBag.Not = notes;
         }
     }
 }

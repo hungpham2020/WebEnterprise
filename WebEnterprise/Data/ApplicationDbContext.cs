@@ -12,6 +12,7 @@ namespace WebEnterprise.Data
         {
 
         }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Post> Posts { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebEnterprise.Data;
 
@@ -11,9 +12,10 @@ using WebEnterprise.Data;
 namespace WebEnterprise.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220327024330_v4")]
+    partial class v4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -313,41 +315,17 @@ namespace WebEnterprise.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c85d5fe3-905b-4fc3-90b0-b474bfbf330a",
+                            ConcurrencyStamp = "89f7b29d-5337-4640-bdec-17e7fccd45c5",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPToRreqmAEV62KnJ0c7PeLU3enlEUoVLvqwGxDmtMhFWe7Egrp/yOW407QQLSCxRw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMXWcb5fes8Tpz9J2BqbHSQWXLTIxOLOA6ZAMgp1L5zur/rNbJ7FOeDsN6Ao+e9yhQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9eb9d2c4-06c1-49ce-b9d3-2ea810fd50d3",
+                            SecurityStamp = "3b94e582-162e-435a-86ba-52a86f502c97",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });
-                });
-
-            modelBuilder.Entity("WebEnterprise.Models.Notification", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("WebEnterprise.Models.Post", b =>

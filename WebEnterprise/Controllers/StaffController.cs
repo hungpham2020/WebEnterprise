@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.Common;
@@ -47,7 +48,7 @@ namespace WebEnterprise.Controllers
             staffs.ToList();
 
             ViewBag.Paging = paging;
-
+            Notifiation();
             return View(staffs);
         }
 
@@ -87,6 +88,7 @@ namespace WebEnterprise.Controllers
             {
                 return RedirectToAction("Index");
             }
+            Notifiation();
             return View(staff);
         }
 
@@ -121,6 +123,18 @@ namespace WebEnterprise.Controllers
             context.SaveChanges();
             TempData["message"] = $"Successfully Delete Staff";
             return RedirectToAction("Index");
+        }
+
+        private void Notifiation()
+        {
+            var notes = (from n in context.Notifications
+                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         select new Notification
+                         {
+                             description = n.description,
+                             date = n.date
+                         }).ToList();
+            ViewBag.Not = notes;
         }
     }
 }

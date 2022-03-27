@@ -118,7 +118,6 @@
                                                 7, bao nhiêu ielts thì được miễn học lớp dự bị tiếng anh thế ạ?
                                                 Hic em mong là mng có thể giải đáp giúp em ạ, em cảm ơn ac rất rất nhiều ạaa 🥰🥰
                                             </h8>
-                                            @*@Html.DisplayFor(modelItem => item.Description)*@
                                         </span>
                                     </div>
 
@@ -259,25 +258,64 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#example" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
                                 </div>
+
                             </div>
                         </div>
                     </div>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+
+                                    <h5 class="modal-title" id="exampleModalLabel">Are You Agree</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+                                    quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+
+                                    Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
+
+                                    Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-secondary">Accept</button>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
                 </form>
 
 
-            </div>
-        </div>
-    </div>
-</div>
-
 
 
             </div>
         </div>
     </div>
 </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 
 @section Scripts{

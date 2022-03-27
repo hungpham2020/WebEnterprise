@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.Common;
@@ -46,7 +47,7 @@ namespace WebEnterprise.Controllers
             assurances = assurances.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
 
             assurances.ToList();
-
+            Notifiation();
             ViewBag.Paging = paging;
             return View(assurances);
         }
@@ -87,6 +88,7 @@ namespace WebEnterprise.Controllers
             {
                 return RedirectToAction("Index");
             }
+            Notifiation();
             return View(assurance);
         }
 
@@ -123,5 +125,18 @@ namespace WebEnterprise.Controllers
             TempData["message"] = $"Successfully Delete Assurance";
             return RedirectToAction("Index");
         }
+
+        private void Notifiation()
+        {
+            var notes = (from n in context.Notifications
+                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         select new Notification
+                         {
+                             description = n.description,
+                             date = n.date
+                         }).ToList();
+            ViewBag.Not = notes;
+        }
+
     }
 }

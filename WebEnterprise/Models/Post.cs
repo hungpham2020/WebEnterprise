@@ -20,6 +20,5 @@ namespace WebEnterprise.Models
 
         public string UserId { get; set; }
 
-        //public string? File { get; set; }
     }
 }
