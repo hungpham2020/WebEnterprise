@@ -36,6 +36,25 @@
 
                         @if (User.IsInRole("Admin") || User.IsInRole("Assurance") || User.IsInRole("Coordinator") || User.IsInRole("Staff"))
                         {
+                            
+                            <li class="nav-item">
+
+                                 <div class="dropdown">
+                                    <a class="nav-link text-dark" data-toggle="dropdown" asp-area="" >Notification</a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <ul class="link-list-opt no-bdr">
+                                               
+                                                @foreach(Notification a in ViewBag.Not)
+                                                {
+                                                     <span><a href="#">@a.description at @a.date</a></span>
+                                                     <div class="dropdown-divider"></div>
+                                                }
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+
                             <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="UserWall">Manage Your Post</a>
                             </li>

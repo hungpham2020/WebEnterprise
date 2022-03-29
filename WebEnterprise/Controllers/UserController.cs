@@ -7,6 +7,7 @@ using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.DTO;
 
+
 namespace WebEnterprise.Controllers
 {
     public class UserController : Controller
@@ -84,6 +85,7 @@ namespace WebEnterprise.Controllers
                          }).ToList(); 
             
             ViewCat();
+            Notifiation();
             return View(posts);
         }
 
@@ -109,6 +111,7 @@ namespace WebEnterprise.Controllers
                             DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
                         }).ToList();
             ViewCat();
+            Notifiation();
             return View(posts);
         }
 
@@ -122,9 +125,17 @@ namespace WebEnterprise.Controllers
             comment.UpdateTime = DateTime.Now;
             comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            context.Comments.Add(comment);
-            context.SaveChanges();
-            return RedirectToAction("ShowComment",new { id = comment.PostId });
+           if(comment.AuthorId == null||comment.PostId == 0)
+            {
+                TempData["message"] = $"You cannot comment, please check your account or post again!";
+                return RedirectToAction("ShowComment");
+            }
+            else
+            {
+                context.Comments.Add(comment);
+                context.SaveChanges();
+                return RedirectToAction("ShowComment", new { id = comment.PostId });
+            }
         }
 
 
@@ -162,6 +173,7 @@ namespace WebEnterprise.Controllers
                                 PostDescription = p.Description,
                                 PostId = id,
                             }).ToList();
+            Notifiation();
             return View(comments);
         }
 
@@ -222,10 +234,29 @@ namespace WebEnterprise.Controllers
                         post.ClosedDate = post.OpenDate.AddDays(14);
                         post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                        context.Posts.Add(post);
-                        context.SaveChanges();
-                        TempData["message"] = $"Successfully Add new Post {post.Title}";
-                        return RedirectToAction("Index");
+                        var note = new Notification();
+                        var user = (from u in context.Users
+                                   where u.Id == post.UserId
+                                   select new CustomUser
+                                   {
+                                       Id = u.Id,
+                                       FullName = u.FullName,
+                                       UserName = u.UserName
+                                   }).FirstOrDefault();
+
+                       if(user != null && post.Title != null)
+                        {
+                            note.description = $"{user.UserName} add new post {post.Title}";
+                            note.date = DateTime.Now;
+                            note.UserId = post.UserId;
+
+                            context.Posts.Add(post);
+                            context.Notifications.Add(note);
+                            context.SaveChanges();
+
+                            TempData["message"] = $"Successfully Add new Post {post.Title}";
+                            return RedirectToAction("Index");
+                         }
                     }
             }
             TempData["message"] = $"Cannot Add this Post";
@@ -250,6 +281,7 @@ namespace WebEnterprise.Controllers
             {
 
                 ViewCate();
+                Notifiation();
                 SelectedCat(id);
                 return View(post);
             }
@@ -288,15 +320,18 @@ namespace WebEnterprise.Controllers
         public IActionResult DeletePost(int id)
         {
             var post = context.Posts.FirstOrDefault(p => p.Id == id);
+            var user = context.Users.FirstOrDefault(u => u.Id == post.UserId);
+            var note = context.Notifications.FirstOrDefault(p => p.description.Contains($"{user.UserName} add new post {post.Title}"));
             if (post.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
                 context.Remove(post);
+                context.Remove(note);
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Delete Post {post.Title}";
-                return RedirectToAction("Index");
+                return RedirectToAction("UserWall");
             }
             TempData["message"] = $"Can not delete post {post.Title}, cause you are not owner!";
-            return RedirectToAction("Index");
+            return RedirectToAction("UserWall");
         }
 
         [HttpPost]
@@ -336,6 +371,20 @@ namespace WebEnterprise.Controllers
             }
             return null;
         }
+
+        private void Notifiation()
+        {
+            var notes = (from n in context.Notifications
+                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         select new Notification
+                         {
+                             description = n.description,
+                             date = n.date
+                         }).ToList();
+            notes.OrderByDescending(c => c.date).Take(5).ToList();
+            ViewBag.Not = notes;
+        }
+
     }
 }
 

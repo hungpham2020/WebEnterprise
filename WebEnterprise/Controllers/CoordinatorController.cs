@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.Common;
@@ -75,6 +76,7 @@ namespace WebEnterprise.Controllers
             ViewBag.Paging = paging;
             ViewDepartment();
 
+            Notifiation();
             return View(coordinators);
         }
 
@@ -120,6 +122,7 @@ namespace WebEnterprise.Controllers
                 return RedirectToAction("Index");
             }
             ViewDepart();
+            Notifiation();
             return View(coordinator);
         }
 
@@ -155,6 +158,18 @@ namespace WebEnterprise.Controllers
             context.SaveChanges();
             TempData["message"] = $"Successfully Delete Coordinator";
             return RedirectToAction("Index");
+        }
+        private void Notifiation()
+        {
+            var notes = (from n in context.Notifications
+                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         select new Notification
+                         {
+                             description = n.description,
+                             date = n.date
+                         }).ToList();
+            notes.OrderByDescending(c => c.date).Take(5).ToList();
+            ViewBag.Not = notes;
         }
     }
 }

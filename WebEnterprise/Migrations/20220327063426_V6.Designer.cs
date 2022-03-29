@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebEnterprise.Data;
 
@@ -11,9 +12,10 @@ using WebEnterprise.Data;
 namespace WebEnterprise.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220327063426_V6")]
+    partial class V6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,9 +255,6 @@ namespace WebEnterprise.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -316,38 +315,19 @@ namespace WebEnterprise.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f6ec6b5f-a7de-454b-889c-ca6a424f97d1",
+                            ConcurrencyStamp = "c85d5fe3-905b-4fc3-90b0-b474bfbf330a",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKRsO3TXuvEo/KSag+NEkX4eZ/1Ucnm6ApngoaUXEOrRAUACfwOlOHstHytB9Dk1nQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPToRreqmAEV62KnJ0c7PeLU3enlEUoVLvqwGxDmtMhFWe7Egrp/yOW407QQLSCxRw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4c316ed7-5bc3-4a9f-86e5-8a52c5d1e715",
+                            SecurityStamp = "9eb9d2c4-06c1-49ce-b9d3-2ea810fd50d3",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });
                 });
 
-            modelBuilder.Entity("WebEnterprise.Models.Department", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Departments");
             modelBuilder.Entity("WebEnterprise.Models.Notification", b =>
                 {
                     b.Property<int>("id")

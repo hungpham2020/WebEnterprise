@@ -92,7 +92,7 @@ namespace WebEnterprise.Controllers
             posts.ToList();
 
             ViewBag.Paging = paging;
-
+            Notifiation();
             ViewCat();
             return View(posts);
         }
@@ -110,6 +110,7 @@ namespace WebEnterprise.Controllers
                              OpenDate = p.OpenDate,
                              ClosedDate = p.ClosedDate,
                          }).ToList();
+            Notifiation();
             return View(posts);
         }
 
@@ -117,26 +118,49 @@ namespace WebEnterprise.Controllers
         public IActionResult AddPost(PostDTO res, IFormCollection f)
         {
             var cat = LoadCat(f["CatIds"]);
-            foreach(var c in cat)
+            foreach (var c in cat)
             {
                 res.CatId = c.Id;
             }
-            if (!ModelState.IsValid)
+            if (res.CatId != 0)
             {
-                var post = new Post();
-                post.Title = res.Title;
-                post.Description = res.Description;
-                post.CateId = res.CatId;
-                post.OpenDate = DateTime.Now;
-                post.ClosedDate = post.OpenDate.AddDays(14);
-                post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                
-                context.Posts.Add(post);
-                context.SaveChanges();
-                TempData["message"] = $"Successfully Add new Post {post.Title}";
-                return RedirectToAction("Index");
+                if (!ModelState.IsValid)
+                {
+                    var post = new Post();
+                    post.Title = res.Title;
+                    post.Description = res.Description;
+                    post.CateId = res.CatId;
+                    post.OpenDate = DateTime.Now;
+                    post.ClosedDate = post.OpenDate.AddDays(14);
+                    post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    var note = new Notification();
+                    var user = (from u in context.Users
+                                where u.Id == post.UserId
+                                select new CustomUser
+                                {
+                                    Id = u.Id,
+                                    FullName = u.FullName,
+                                    UserName = u.UserName
+                                }).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        note.description = $"{user.UserName} add new post {post.Title}";
+                        note.date = DateTime.Now;
+                        note.UserId = post.UserId;
+
+                        context.Posts.Add(post);
+                        context.Notifications.Add(note);
+                        context.SaveChanges();
+
+                        TempData["message"] = $"Successfully Add new Post {post.Title}";
+                        return RedirectToAction("Index");
+                    }
+                }
             }
-            return Content("Cannot Add");
+            TempData["message"] = $"Cannot Add this Post";
+            return RedirectToAction("Index");
 
         }
 
@@ -157,6 +181,7 @@ namespace WebEnterprise.Controllers
             }
             ViewCate();
             SelectedCat(id);
+            Notifiation();
             return View(post);
         }
 
@@ -188,8 +213,11 @@ namespace WebEnterprise.Controllers
         public IActionResult DeletePost(int id)
         {
             var post = context.Posts.FirstOrDefault(p => p.Id == id);
-            if(post != null)
+            var user = context.Users.FirstOrDefault(u => u.Id == post.UserId);
+            var note = context.Notifications.FirstOrDefault(p => p.description.Contains($"{user.UserName} add new post {post.Title}"));
+            if (post != null)
             {
+                context.Remove(note);
                 context.Remove(post);
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Delete Post {post.Title}";
@@ -235,6 +263,19 @@ namespace WebEnterprise.Controllers
                 new FileExtensionContentTypeProvider().TryGetContentType(template.FullName, out contentType);
                 return File(excel.GetAsByteArray(), contentType);
             }
+        }
+        
+        private void Notifiation()
+        {
+            var notes = (from n in context.Notifications
+                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         select new Notification
+                         {
+                             description = n.description,
+                             date = n.date
+                         }).ToList();
+            notes.OrderByDescending(c => c.date).Take(5).ToList();
+            ViewBag.Not = notes;
         }
     }
 }
