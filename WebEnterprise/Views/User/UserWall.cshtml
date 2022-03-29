@@ -16,18 +16,6 @@
     var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        .Add {
-            margin-left: 80%;
-            display: inline-grid;
-            margin-bottom: 1%;
-        }
-    </style>
-</head>
-
 <h1 class="text-center">
     Your Posts
 </h1>
@@ -38,169 +26,110 @@
 }
 @Html.Partial("_Message")
 
-    <div class="Add">
-        <li class="nk-block-tools-opt">
-            <a data-target="addpost" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
-            <a data-target="addpost" class="toggle btn btn-info " style=" color:white"><em class="icon ni ni-plus"></em><span>Add Post</span></a>
-        </li>
-    </div>
+<div class="container-fluid">
+    <div class="nk-content-inner">
 
-    <div class="container-fluid">
-        <div class="nk-content-inner">
-
-            <div class="nk-content-body">
+        <div class="nk-content-body">
 
 
 
-                @foreach (var item in Model)
-                {
-                    <div class="col-xxl-6 mb-2">
-                        <div class="card h-100">
-                            <div class="card-inner">
-                                <div class="card-title-group align-start gx-3 mb-3">
-                                    <div class="card-title">
-                                        <h6 class="title">@Html.DisplayFor(modelItem => item.Title)</h6>
-                                        <span class="tb-sub">By
-                                            @Html.DisplayFor(modelItem => item.AuthorName)
-                                        </span>
+            @foreach (var item in Model)
+            {
+                <div class="col-xxl-6 mb-2">
+                    <div class="card h-100">
+                        <div class="card-inner">
+                            <div class="card-title-group align-start gx-3 mb-3">
+                                <div class="card-title">
+                                    <h6 class="title">@Html.DisplayFor(modelItem => item.Title)</h6>
+                                    <span class="tb-sub">
+                                        By
+                                        @Html.DisplayFor(modelItem => item.AuthorName)
+                                    </span>
 
-                                        <p>On @Html.DisplayFor(modelItem => item.OpenDate)</p>
-                                    </div>
+                                    <p>On @Html.DisplayFor(modelItem => item.OpenDate)</p>
+                                </div>
+                            </div>
+
+                            <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
+                                @*//-------------------------------------------------------------*@
+
+                                <div class="nk-tb-col">
+                                    <span class="tb-sub">
+                                        <h8>
+                                            @Html.DisplayFor(modelItem => item.Description)
+                                        </h8>
+                                    </span>
                                 </div>
 
-                                <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
-                                    @*//-------------------------------------------------------------*@
+                            </div>
+                        </div><!-- .card -->
 
-                                    <div class="nk-tb-col">
-                                        <span class="tb-sub">
-                                            <h8>
-                                                @Html.DisplayFor(modelItem => item.Description)
-                                            </h8>
-                                        </span>
+
+                    <div id="Placeholder"></div>
+
+                        @*-----------Like and comment-------------*@
+                        <div>
+                            <div class="btn-parent row text-center">
+                                <div class="col-2 ml-2">
+                                    <div class="row">
+                                        <div class="col">Like: @item.Like</div>
+                                        <div class="col">DisLike: @item.DisLike</div>
                                     </div>
-
                                 </div>
-                            </div><!-- .card -->
-
-
-                        <div id="Placeholder"></div>
-
-                            @*-----------Like and comment-------------*@
-                            <div>
-                                <div class="btn-parent row text-center">
-                                    <div class="col-2 ml-2">
-                                        <div class="row">
-                                            <div class="col">Like: @item.Like</div>
-                                            <div class="col">DisLike: @item.DisLike</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-8 text-center">
-                                        <input hidden value="@item.Id" class="post-id" />
-                                        @if (item.Status == true)
-                                        {
-                                            <button type="button" class="btn btn-primary" disabled>
-                                                Liked
-                                            </button>
-                                        }
-                                        else if (item.Status == false)
-                                        {
-                                            <button type="button" class="btn btn-primary" disabled>
-                                                DisLiked
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <button type="button" class="btn btn-primary btn-like">
-                                                Like
-                                            </button>
-                                            <button type="button" class="btn btn-primary btn-dislike">
-                                                DisLike
-                                            </button>
-                                        }
-                                        <button class="btn btn-info">
-                                            @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
+                                <div class="col-8 text-center">
+                                    <input hidden value="@item.Id" class="post-id" />
+                                    @if (item.Status == true)
+                                    {
+                                        <button type="button" class="btn btn-primary" disabled>
+                                            Liked
                                         </button>
-                                    </div>
-                                    <div class="col-1">
-                                        <div class="nk-tb-col nk-tb-col-tools">
-                                            <ul class="nk-tb-actions gx-1 my-n1">
-                                                <li class="mr-n1">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                            <ul class="link-list-opt no-bdr">
-                                                                <li><span>@Html.ActionLink("Edit", "EditPost", new { id = item.Id })</span></li>
-                                                                <li><span>@Html.ActionLink("Delete", "DeletePost", new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                         </div>
-                                     </div>
-
-                                    
-                                </div>
-                            </div>
-
-                        </div><!-- .col -->
-
-                    </div>
-                }
-                                <div class="col-12">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#example" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-
-                                    <h5 class="modal-title" id="exampleModalLabel">Are You Agree</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
+                                    }
+                                    else if (item.Status == false)
+                                    {
+                                        <button type="button" class="btn btn-primary" disabled>
+                                            DisLiked
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-primary btn-like">
+                                            Like
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-dislike">
+                                            DisLike
+                                        </button>
+                                    }
+                                    <button class="btn btn-info">
+                                        @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
                                     </button>
                                 </div>
-
-                                <div class="modal-body">
-                                    Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                                    quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-
-                                    Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
-
-                                    Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-secondary">Accept</button>
+                                <div class="col-1">
+                                    <div class="nk-tb-col nk-tb-col-tools">
+                                        <ul class="nk-tb-actions gx-1 my-n1">
+                                            <li class="mr-n1">
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <ul class="link-list-opt no-bdr">
+                                                            <li><span>@Html.ActionLink("Edit", "EditPost", new { id = item.Id })</span></li>
+                                                            <li><span>@Html.ActionLink("Delete", "DeletePost", new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
 
 
                             </div>
                         </div>
-                    </div>
 
-                </form>
-
-
-
+                    </div><!-- .col -->
 
             </div>
-        </div>
-    </div>
-</div>
+            }
 
-
-
-            </div>
         </div>
     </div>
 </div>
@@ -218,29 +147,29 @@
 
     $(document).ready(function() {
         $('.btn-like').click(function(){
-            var parent = $(this).parents('.btn-parent')
-            var postId = parent.find('.post-id').val()
-            var userId = "@userid"
-            var thisEl = $(this)
-            var data = {
-                "postId": postId,
-                "userId": userId,
-            }
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("Like", "User")',
-                data: req = JSON.stringify(data),
-                cache: false,
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                processData: false,
-                success: function(res){
-                    thisEl.text("Liked")
-                    thisEl.attr('disabled', true)
-                    parent.find('.btn-dislike').hide()
+                var parent = $(this).parents('.btn-parent')
+                var postId = parent.find('.post-id').val()
+                var userId = "@userid"
+                var thisEl = $(this)
+                var data = {
+                    "postId": postId,
+                    "userId": userId,
                 }
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Like", "User")',
+                    data: req = JSON.stringify(data),
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function(res){
+                        thisEl.text("Liked")
+                        thisEl.attr('disabled', true)
+                        parent.find('.btn-dislike').hide()
+                    }
+                })
             })
-        })
         $('.btn-dislike').click(function(){
             var parent = $(this).parents('.btn-parent')
             var postId = parent.find('.post-id').val()
