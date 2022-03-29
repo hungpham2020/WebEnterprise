@@ -64,8 +64,8 @@ namespace WebEnterprise.Controllers
         //-----------------------------------
 
         public IActionResult Index()
-        
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var posts = (from p in context.Posts
                          join u in context.Users on p.UserId equals u.Id
                          join c in context.Categories on p.CateId equals c.Id
@@ -78,6 +78,9 @@ namespace WebEnterprise.Controllers
                              CatId = c.Id,
                              CatName = c.Name,
                              AuthorName = u.FullName,
+                             Status = context.UserLikePosts.FirstOrDefault(x => x.UserId.Equals(userId) && x.PostId == p.Id).Status,
+                             Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
+                             DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
                          }).ToList(); 
             
             ViewCat();
@@ -100,7 +103,10 @@ namespace WebEnterprise.Controllers
                             Description= p.Description,
                             OpenDate = p.OpenDate,
                             CatId = c.Id,
-                            AuthorName = u.FullName
+                            AuthorName = u.FullName,
+                            Status = context.UserLikePosts.FirstOrDefault(x => x.UserId.Equals(id) && x.PostId == p.Id).Status,
+                            Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
+                            DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
                         }).ToList();
             ViewCat();
             return View(posts);
@@ -125,12 +131,28 @@ namespace WebEnterprise.Controllers
         [HttpGet]
         public IActionResult ShowComment(int id)
         {
-            ViewBag.PostID = id;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var post = (from p in context.Posts
+                        join u in context.Users on p.UserId equals u.Id
+                        join c in context.Categories on p.CateId equals c.Id
+                        where p.Id == id
+                        select new PostDTO
+                        {
+                            Id = p.Id,
+                            Title = p.Title,
+                            Description = p.Description,
+                            OpenDate = p.OpenDate,
+                            CatId = c.Id,
+                            AuthorName = u.FullName,
+                            Status = context.UserLikePosts.FirstOrDefault(x => x.UserId.Equals(userId) && x.PostId == p.Id).Status,
+                            Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
+                            DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
+                        }).FirstOrDefault();
+            ViewBag.Post = post;
             var comments = (from p in context.Posts
                             join c in context.Comments on p.Id equals c.PostId
                             join u in context.Users on c.AuthorId equals u.Id
                             where c.PostId == id
-                            
                             select new CommentDTO
                             {
                                 CommentId = c.Id,
@@ -161,15 +183,17 @@ namespace WebEnterprise.Controllers
             return RedirectToAction("ShowComment", new { id = PostId });
         }
 
-
-
         public IActionResult DeleteComment(int id)
         {
             var comment = context.Comments.FirstOrDefault(c => c.Id == id);
-
-            context.Comments.Remove(comment);
-            context.SaveChanges();
-            TempData["message"] = $"Delete Comment Successfully!";
+            if (comment.AuthorId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            {
+                context.Comments.Remove(comment);
+                context.SaveChanges();
+                TempData["message"] = $"Delete Comment Successfully!";
+                return RedirectToAction("ShowComment", new { id = comment.PostId });
+            }
+            TempData["message"] = $"You not have permission to delete this comment";
             return RedirectToAction("ShowComment", new { id = comment.PostId });
         }
 
@@ -239,20 +263,23 @@ namespace WebEnterprise.Controllers
             var post = context.Posts.Find(res.Id);
             if (post != null)
             {
-                post.Id = res.Id;
-                post.Title = res.Title;
-                post.Description = res.Description;
-                post.OpenDate = res.OpenDate;
-                post.ClosedDate = res.ClosedDate;
-                post.CateId = res.CatId;
+                if (ModelState.IsValid)
+                {
+                    post.Id = res.Id;
+                    post.Title = res.Title;
+                    post.Description = res.Description;
+                    post.OpenDate = res.OpenDate;
+                    post.ClosedDate = res.ClosedDate;
+                    post.CateId = res.CatId;
 
-                //string extension = Path.GetExtension(res.FileUpload.FileName);
-                //string newname = post.Title + extension;
-                //post.File = await FileControl.UploadFile(res.FileUpload, @"postFiles\", newname.ToLower());
-                context.Entry(post).State = EntityState.Modified;
-                context.SaveChanges();
-                TempData["message"] = $"Successfully Edit Post {post.Title}";
-                return RedirectToAction("Index");
+                    //string extension = Path.GetExtension(res.FileUpload.FileName);
+                    //string newname = post.Title + extension;
+                    //post.File = await FileControl.UploadFile(res.FileUpload, @"postFiles\", newname.ToLower());
+                    context.Entry(post).State = EntityState.Modified;
+                    context.SaveChanges();
+                    TempData["message"] = $"Successfully Edit Post {post.Title}";
+                    return RedirectToAction("Index");
+                }
             }
             SelectedCat(res.Id);
             return View(res);

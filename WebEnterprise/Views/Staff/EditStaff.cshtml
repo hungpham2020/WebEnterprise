@@ -41,6 +41,14 @@
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label" for="dob">Department</label>
+                    <br />
+                    @Html.DropDownListFor( p => p.DepartId, (SelectList)ViewBag.Departments, htmlAttributes: new { @class = "form-control mb-2" })
+                     <span asp-validation-for="DepartId" class="text-danger"></span>
+                </div>
+            </div>
             <div class="col-md-12">
                 <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
                     <li>

@@ -2,6 +2,12 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "../Shared/_AdminLayout.cshtml";
+    List<int> selectedids = new List<int>();
+    if (TempData["DepartmentIds"] != null)
+    {
+        selectedids = TempData["DepartmentIds"].ToString().Split(',')
+        .Select(id => Int32.Parse(id)).ToList();
+    }
 }
 
 @if (TempData["message"] != null)
@@ -11,6 +17,7 @@
 
 <!DOCTYPE html>
 <html lang="zxx" class="js">
+    @await Html.PartialAsync("_Message")
 <body class="nk-body bg-lighter npc-general has-sidebar ">
 
      <!-- main header  -->
@@ -157,7 +164,28 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-dark btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Department
+                                        </button>
+                                        <div class="dropdown-menu">
 
+                                            @foreach (var r in ViewBag.Department)
+                                            {
+                                                <li class="nk-menu-item has-sub">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio"
+                                                           value="@r.Id" id="@r.Name" name="DepartmentIds"
+                                                           @(selectedids.Contains(r.Id) ? "checked" : string.Empty) />
+                                                        <label class="form-check-label" for="@r.Name">
+                                                            @r.Name
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            }
+
+                                        </div>
+                                    </div>
                                     <div class="col-12">
                                         <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
                                     </div>

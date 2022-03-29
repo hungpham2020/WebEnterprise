@@ -1,13 +1,7 @@
-﻿@model IEnumerable<WebEnterprise.Models.DTO.UserDTO>
+﻿@model IEnumerable<WebEnterprise.Models.Department>
 @{
-    ViewData["Title"] = "Index";
+    ViewData ["Title"] ="Index";
     Layout = "../Shared/_AdminLayout.cshtml";
-    List<int> selectedids = new List<int>();
-    if (TempData["DepartmentIds"] != null)
-    {
-        selectedids = TempData["DepartmentIds"].ToString().Split(',')
-        .Select(id => Int32.Parse(id)).ToList();
-    }
 }
 
 @if (TempData["message"] != null)
@@ -17,7 +11,7 @@
 
 <!DOCTYPE html>
 <html lang="zxx" class="js">
-    @await Html.PartialAsync("_Message")
+@await Html.PartialAsync("_Message")
 <body class="nk-body bg-lighter npc-general has-sidebar ">
 
      <!-- main header  -->
@@ -30,7 +24,7 @@
                                 <div class="nk-block-head nk-block-head-sm">
                                     <div class="nk-block-between">
                                         <div class="nk-block-head-content">
-                                            <h3 class="nk-block-title page-title">Staff</h3>
+                                            <h3 class="nk-block-title page-title">Departments</h3>
                                         </div><!-- .nk-block-head-content -->
                                         <div class="nk-block-head-content">
                                             <div class="toggle-wrap nk-block-tools-toggle">
@@ -44,8 +38,8 @@
                                                             </form>
                                                         </li>
                                                          <li class="nk-block-tools-opt">
-                                                            <a data-target="addstaff" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
-                                                            <a data-target="addstaff" class="toggle btn btn-primary d-none d-md-inline-flex" style=" color:white"><em class="icon ni ni-plus"></em><span>Add Staff Account</span></a>
+                                                            <a data-target="addproduct" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                                            <a data-target="addproduct" class="toggle btn btn-primary d-none d-md-inline-flex" style=" color:white"><em class="icon ni ni-plus"></em><span>Add Department</span></a>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -60,8 +54,7 @@
                                                 <div class="nk-tb-list">
                                                     <div class="nk-tb-item nk-tb-head">
                                                         <div class="nk-tb-col tb-col-sm"><span>Name</span></div>
-                                                        <div class="nk-tb-col tb-col-md"><span>Email</span></div>
-                                                        <div class="nk-tb-col tb-col-md"><span>User Name</span></div>
+                                                        <div class="nk-tb-col tb-col-md"><span>Description</span></div>
                                                        
                                                          <div class="nk-tb-col tb-col-md">
                                                             <ul class="nk-tb-actions gx-1 my-n1">
@@ -81,18 +74,12 @@
                                                      <div class="nk-tb-item">
                                                         <div class="nk-tb-col">
                                                             <span class="tb-lead">
-                                                                @Html.DisplayFor(modelItem => item.FullName)
+                                                                @Html.DisplayFor(modelItem => item.Name)
                                                             </span>
                                                         </div>
                                                         <div class="nk-tb-col">
                                                             <span class="tb-sub">
-                                                                @Html.DisplayFor(modelItem => item.Email)
-                                                            </span>
-                                                        </div>
-
-                                                         <div class="nk-tb-col">
-                                                            <span class="tb-sub">
-                                                                @Html.DisplayFor(modelItem => item.UserName)
+                                                                @Html.DisplayFor(modelItem => item.Description)
                                                             </span>
                                                         </div>
                                                        
@@ -103,8 +90,8 @@
                                                                         <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                                         <div class="dropdown-menu dropdown-menu-right">
                                                                             <ul class="link-list-opt no-bdr">
-                                                                                <li><span>@Html.ActionLink("Edit", "EditStaff", new { id = item.Id })</span></li>
-                                                                                <li><span>@Html.ActionLink("Delete", "DeleteStaff", new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
+                                                                                <li><span>@Html.ActionLink("Edit Department", "EditDepartment", new {  id=item.Id  })</span></li>
+                                                                                <li><span>@Html.ActionLink("Delete", "DeleteDepartment", new { id=item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
                                                                             </ul>
                                                                         </div>
                                                                     </div>
@@ -124,80 +111,58 @@
                                     </div>
                                 </div>
                                 @Html.Partial("PagingPartial")
+                                <!-- .nk-block -->
 
 
 
-                    <form method="post" asp-action="AddStaff" asp-controller="Staff">
-                        <div class="nk-add-product toggle-slide toggle-slide-right" data-content="addstaff" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
-                            <div class="nk-block-head">
-                                <div class="nk-block-head-content">
-                                    <h5 class="nk-block-title">New Staff</h5>
-                                    <div class="nk-block-des">
-                                        <p>Add Staff information.</p>
-                                    </div>
-                                </div>
-                            </div><!-- .nk-block-head -->
-                            <div class="nk-block">
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label class="form-label" for="Email">Email</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" class="form-control" name="Email">
+                                  <form method="post" asp-action="AddDepart"  asp-controller="Department" asp-area="">
+                                    <div class="nk-add-product toggle-slide toggle-slide-right" data-content="addproduct" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
+                                    <div class="nk-block-head">
+                                        <div class="nk-block-head-content">
+                                            <h5 class="nk-block-title">New Department</h5>
+                                            <div class="nk-block-des">
+                                                <p>add information and add new Department.</p>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label" for="FullName">Full Name</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" class="form-control" name="FullName">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label" for="UserName">User Name</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" class="form-control" name="UserName">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn btn-outline-dark btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Department
-                                        </button>
-                                        <div class="dropdown-menu">
+                                    </div><!-- .nk-block-head -->
+                                    <div class="nk-block">
+                                        <div class="row g-3">
 
-                                            @foreach (var r in ViewBag.Department)
-                                            {
-                                                <li class="nk-menu-item has-sub">
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio"
-                                                           value="@r.Id" id="@r.Name" name="DepartmentIds"
-                                                           @(selectedids.Contains(r.Id) ? "checked" : string.Empty) />
-                                                        <label class="form-check-label" for="@r.Name">
-                                                            @r.Name
-                                                        </label>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="name">Department name</label>
+                                                    <div class="form-control-wrap">
+                                                        <input type="text" class="form-control" name="name">
                                                     </div>
-                                                </li>
-                                            }
+                                                </div>
+                                            </div>
+                                      
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="description">Description</label>
+                                                    <div class="form-control-wrap">
+                                                        <input type="text" class="form-control" name="description">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                      
+                                            <div class="col-12">
+                                                <button class="btn btn-primary" type="submit"><em class="icon ni ni-plus"></em><span>Add</span></button>
+                                            </div>
+
 
                                         </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
-                                    </div>
+                                    </div><!-- .nk-block -->
                                 </div>
+                              </form>
+
+
                             </div>
                         </div>
-                    </form>
-
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <!-- content  -->
+                <!-- content  -->
 
 </body>
 </html>
+

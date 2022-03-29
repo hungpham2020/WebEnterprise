@@ -148,19 +148,19 @@ namespace WebEnterprise.Areas.Identity.Pages.Account
             {
                 if (role == "Admin")
                 {
-                    return RedirectToAction("Index", "Assurance");
+                    return RedirectToAction("Index", "Dashboard");
                 }
                 if (role == "Assurance")
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "User");
                 }
                 if (role == "Coordinator")
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "User");
                 }
                 if (role == "Staff")
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "User");
                 }
             }
             return Content("no");

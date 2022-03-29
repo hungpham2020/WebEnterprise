@@ -1,10 +1,16 @@
-﻿@model IEnumerable<WebEnterprise.Models.DTO.CommentDTO>
+﻿@using System.Security.Claims
+@using WebEnterprise.Models.DTO
+@model IEnumerable<WebEnterprise.Models.DTO.CommentDTO>
 <html lang="zxx" class="js">
 
 <div class="style">
 @if (TempData["message"] != null)
 {
     ViewBag.Message = TempData["message"];
+}
+@{
+    PostDTO post = ViewBag.Post;
+    var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 @Html.Partial("_Message")
 </div>
@@ -20,7 +26,103 @@
             <div class="nk-content-inner">
                 <div class="nk-content-body">
 
+                    <div class="col-xxl-6 mb-2">
+                        <div class="card h-100">
+                            <div class="card-inner">
+                                <div class="card-title-group align-start gx-3 mb-3">
+                                    <div class="card-title">
+                                        <h6 class="title">@post.Title</h6>
+                                        <span class="tb-sub">By
+                                            @if (string.IsNullOrEmpty(@post.AuthorName))
+                                            {
+                                                <span>Admin</span>
+                                            }
+                                            else
+                                            {
+                                                @post.AuthorName
+                                            }
+                                        </span>
 
+                                        <p>On @post.OpenDate</p>
+                                    </div>
+                                </div>
+
+                                <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
+                                    @*//-------------------------------------------------------------*@
+
+                                    <div class="nk-tb-col">
+                                        <span class="tb-sub">
+                                            <h8>
+                                                @post.Description
+                                            </h8>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div><!-- .card -->
+
+
+                        <div id="Placeholder"></div>
+
+                            @*-----------Like and comment-------------*@
+                            <div>
+                                <div class="btn-parent row text-center">
+                                    <div class="col-3">
+                                        <div class="row">
+                                            <div class="col">Like: @post.Like</div>
+                                            <div class="col">DisLike: @post.DisLike</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-9 text-center">
+                                        <input hidden value="@post.Id" class="post-id" />
+                                        @if (post.Status == true)
+                                        {
+                                            <button type="button" class="btn btn-primary" disabled>
+                                                Liked
+                                            </button>
+                                        }
+                                        else if (post.Status == false)
+                                        {
+                                            <button type="button" class="btn btn-primary" disabled>
+                                                DisLiked
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-primary btn-like">
+                                                Like
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-dislike">
+                                                DisLike
+                                            </button>
+                                        }
+                                        <a data-target="comment" class="toggle btn btn-secondary d-none d-md-inline-flex" style="color:white">Comment</a>
+                                    </div>
+@*                                    <div class="col-1">
+                                        <div class="nk-tb-col nk-tb-col-tools">
+                                            <ul class="nk-tb-actions gx-1 my-n1">
+                                                <li class="mr-n1">
+                                                    <div class="dropdown">
+                                                        <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <ul class="link-list-opt no-bdr">
+                                                                <li><span>@Html.ActionLink("Edit", "EditPost", new { id = item.Id })</span></li>
+                                                                <li><span>@Html.ActionLink("Delete", "DeletePost", new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                         </div>
+                                     </div>*@
+
+                                    
+                                </div>
+                            </div>
+
+                        </div><!-- .col -->
+
+                    </div>
 
 
                     <center>
@@ -64,10 +166,6 @@
                         }
                     </center>
 
-                    <center><a data-target="comment" class="toggle btn btn-secondary d-none d-md-inline-flex" style="color:white" }>Comment</a></center>
-
-
-                    
                     <form id="comment" method="post" asp-action="Comment" asp-controller="User">
                         <div class="nk-add-product toggle-slide toggle-slide-right" data-content="comment" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
                             <div class="nk-block-head">
@@ -83,9 +181,9 @@
 
                             <div class="nk-block">
                                 <div class="row g-3">
-                                  
-                                     <input type="hidden" class="form-control" name="PostId" value="@ViewBag.PostID">
-                                   
+
+                                    <input type="hidden" class="form-control" id="post-id" name="PostId" value="@post.Id">
+
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label class="form-label" for="Description">Description</label>
@@ -96,7 +194,7 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <button class="btn btn-primary" ><em class="icon ni ni-plus"></em><span>Add</span></button>
+                                        <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -109,46 +207,46 @@
     </div>
 
 
-                    <form id="editComment" method="post" asp-action="EditComment" asp-controller="User">
-                        <div class="nk-add-product toggle-slide toggle-slide-right" data-content="editComment" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
-                            <div class="nk-block-head">
-                                <div class="nk-block-head-content">
-                                    <h5 class="nk-block-title">New Post</h5>
-                                    <div class="nk-block-des">
-                                        <p>Add Post Status.</p>
-                                    </div>
-                                </div>
-                            </div><!-- .nk-block-head -->
+    <form id="editComment" method="post" asp-action="EditComment" asp-controller="User">
+        <div class="nk-add-product toggle-slide toggle-slide-right" data-content="editComment" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar>
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h5 class="nk-block-title">New Post</h5>
+                    <div class="nk-block-des">
+                        <p>Add Post Status.</p>
+                    </div>
+                </div>
+            </div><!-- .nk-block-head -->
 
-                            <div class="nk-block">
-                                <div class="row g-3">
+            <div class="nk-block">
+                <div class="row g-3">
 
 
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label class="form-label" for="Description">Description</label>
-                                            <div class="form-control-wrap">
-                                                <input type="text" id="Description" class="form-control" name="Description">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <input type="hidden" id="PostId" class="form-control" name="PostId">
-                                    <input type="hidden" id="CommentId" class="form-control" name="CommentId">
-
-                                    <div class="col-12">
-                                        <button class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add</span></button>
-                                    </div>
-                                </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="form-label" for="Description">Description</label>
+                            <div class="form-control-wrap">
+                                <input type="text" id="Description" class="form-control" name="Description">
                             </div>
                         </div>
-                    </form>
+                    </div>
 
+                    <input type="hidden" id="PostId" class="form-control" name="PostId">
+                    <input type="hidden" id="CommentId" class="form-control" name="CommentId">
 
-
+                    <div class="col-12">
+                        <button class="btn btn-primary"><span>Edit</span></button>
+                    </div>
                 </div>
             </div>
         </div>
+    </form>
+
+
+
+    </div>
+    </div>
+    </div>
     </div>
 
 </body>
@@ -167,6 +265,54 @@
             $('#CommentId').attr('value', item[2]);
             $('#EditComment').attr('action', item[3]);
         });
+        $('.btn-like').click(function(){
+                var parent = $(this).parents('.btn-parent')
+                var postId = $('#post-id').val()
+                var userId = "@userid"
+                var thisEl = $(this)
+                var data = {
+                    "postId": postId,
+                    "userId": userId,
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Like", "User")',
+                    data: req = JSON.stringify(data),
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function(res){
+                        thisEl.text("Liked")
+                        thisEl.attr('disabled', true)
+                        parent.find('.btn-dislike').hide()
+                    }
+                })
+            })
+            $('.btn-dislike').click(function(){
+                var parent = $(this).parents('.btn-parent')
+                var postId = parent.find('.post-id').val()
+                var userId = "@userid"
+                var thisEl = $(this)
+                var data = {
+                    "postId": postId,
+                    "userId": userId,
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("DisLike", "User")',
+                    data: req = JSON.stringify(data),
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function(res){
+                        thisEl.text("DisLiked")
+                        thisEl.attr('disabled', true)
+                        parent.find('.btn-like').hide()
+                    }
+                })
+            })
     });
 
 </script>

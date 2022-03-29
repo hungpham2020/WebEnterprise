@@ -16,6 +16,13 @@ namespace WebEnterprise.Models.DTO
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? UpdateTime{ get; set; }
 
+        public string? PostAuthorName { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime? OpenDate { get; set; }
+
+        public string? CatName { get; set; }
+
         public string ToSeparatedString(string r)
         {
             return $"{this.Description}{r}" +

@@ -21,6 +21,7 @@ namespace WebEnterprise.Models.DTO
         [Date]
         public DateTime ClosedDate { get; set; }
 
+        [Required]
         public int CatId { get; set; }
 
         public string? CatName { get; set; }
@@ -29,8 +30,14 @@ namespace WebEnterprise.Models.DTO
 
         public string? AuthorName { get; set; }
 
+        public int? Like { get; set; }
+
+        public int? DisLike { get; set; }
+
         public IFormFile? FileUpload { get; set; }
 
         public string? FileName { get; set; }
+
+        public bool? Status { get; set; }
     }
 }

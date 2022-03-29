@@ -19,6 +19,7 @@
 
 <!DOCTYPE html>
 <html lang="zxx" class="js">
+    @await Html.PartialAsync("_Message")
 <body class="nk-body bg-lighter npc-general has-sidebar ">
 
 
@@ -47,7 +48,8 @@
                                             </li>
                                             <li class="nk-block-tools-opt">
                                                 <a data-target="addpost" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
-                                                <a data-target="addpost" class="toggle btn btn-primary d-none d-md-inline-flex" style=" color:white"><em class="icon ni ni-plus"></em><span>Add Post</span></a>
+                                                <a data-target="addpost" class="toggle btn btn-primary d-none d-md-inline-flex mr-1" style=" color:white"><em class="icon ni ni-plus"></em><span>Add Post</span></a>
+                                                <a asp-action="Export" class="btn btn-primary d-none d-md-inline-flex" style=" color:white"><em class="icon ni ni-plus"></em><span>Export</span></a>
                                             </li>
                                         </ul>
                                     </div>
@@ -105,8 +107,10 @@
                                                     </span>
                                                 </div>
 
-                                                <div class= "nk-tb-col">
-                                                   <i class="fa-solid fa-heart like-click"></i>
+                                                <div class="nk-tb-col">
+                                                    <span class="tb-sub">
+                                                        @Html.DisplayFor(modelItem => item.Like)
+                                                    </span>
                                                 </div>
                                                 
                                                 <div class="nk-tb-col nk-tb-col-tools">
@@ -213,21 +217,3 @@
 
 </body>
 </html>
-@section scripts{
-    <script>
-
-    //$( ".like-click" ).click(function() {
-    //    alert('abc');
-    //  $( ".like-click" ).css({'color':'blue'});
-    //});
-$(document).ready(function(){
-      $('.like-click').on('click', function() {
-          $(this).css({'color': 'red'})
-      })
-      $('.like-click').on('click', function() {
-          $(this).css({'color': 'black'})
-      })
-  })
-
-</script>
-}

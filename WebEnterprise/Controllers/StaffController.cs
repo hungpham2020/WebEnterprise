@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
@@ -18,6 +19,31 @@ namespace WebEnterprise.Controllers
             userManager = _userManager;
             context = _context;
         }
+
+        private List<Department> LoadDepartment(string form)
+        {
+            if (form == null)
+            {
+                return null;
+            }
+            else
+            {
+                var selected = form.Split(',').Select(id => Int32.Parse(id)).ToArray();
+                return context.Departments.Where(c => selected.Contains(c.Id)).ToList();
+            }
+        }
+
+        private void ViewDepartment()
+        {
+            ViewBag.Department = context.Departments.ToList();
+        }
+
+        private void ViewDepart()
+        {
+            var departments = context.Departments.Select(x => x).ToList();
+            ViewBag.Departments = new SelectList(departments, "Id", "Name");
+        }
+
         public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
         {
             pageIndex = pageIndex ?? 1;
@@ -47,22 +73,27 @@ namespace WebEnterprise.Controllers
             staffs.ToList();
 
             ViewBag.Paging = paging;
-
+            ViewDepartment();
             return View(staffs);
         }
 
         
         [HttpPost]
-        public async Task<IActionResult> AddStaff(string fullname, string username, string email)
+        public async Task<IActionResult> AddStaff(string fullname, string username, string email, IFormCollection f)
         {
             if (ModelState.IsValid)
             {
+                var depart = LoadDepartment(f["DepartmentIds"]);
                 var account = new CustomUser
                 {
                     UserName = username,
                     FullName = fullname,
                     Email = email
                 };
+                foreach (var d in depart)
+                {
+                    account.DepartmentId = d.Id;
+                }
                 var result = await userManager.CreateAsync(account, "Abc@12345");
                 if (result.Succeeded)
                 {
@@ -87,6 +118,7 @@ namespace WebEnterprise.Controllers
             {
                 return RedirectToAction("Index");
             }
+            ViewDepart();
             return View(staff);
         }
 
@@ -101,12 +133,14 @@ namespace WebEnterprise.Controllers
                     staff.UserName = res.UserName;
                     staff.FullName = res.FullName;
                     staff.PhoneNumber = res.PhoneNumber;
+                    staff.DepartmentId = res.DepartId;
 
                 };
                 context.SaveChanges();
                 TempData["message"] = $"Successfully Edit Staff {staff.FullName}";
                 return RedirectToAction("Index");
             }
+            ViewDepart();
             return View(res);
         }
 

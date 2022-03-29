@@ -17,6 +17,8 @@ namespace WebEnterprise.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<UserLikePost> UserLikePosts { get; set; }
 
+        public DbSet<Department> Departments { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

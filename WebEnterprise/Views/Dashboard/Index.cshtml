@@ -48,22 +48,22 @@
                                                 <h6 class="title">Top 5 Lastest Posts</h6>
                                             </div>
                                         </div>
-                                        <div class="nk-tb-item nk-tb-head text-center w-100 d-flex justify-content-around border-secondary border-top-0 border-right-0 border-left-0" style="border: 1px solid rgba(255, 0, 0, .1)">
-			                                <div class="nk-tb-col"><span>Title</span></div>
-			                                <div class="nk-tb-col"><span>Author Name</span></div>
-			                                <div class="nk-tb-col"><span>Cat Name</span></div>
-			                                <div class="nk-tb-col"><span>Open Date</span></div>
-		                                </div>
-                                        @foreach(var l in ViewBag.Lastest)
-                                        {
-                                            <div class="col-12">
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col col-3 ml-5 pl-5">
-                                                        @l.Title
-                                                    </div>
-                                                    <div class="nk-tb-col col-3 text-center">
-                                                        @{
-                                                            if(@l.AuthorName != null)
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <td>Title</td>
+                                                    <td>Author Name</td>
+                                                    <td>Cat Name</td>
+                                                    <td>Open Date</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                 @foreach(var l in ViewBag.Lastest)
+                                                 {
+                                                    <tr>
+                                                        <td>@l.Title</td>
+                                                        <td>
+                                                            @if(@l.AuthorName != null)
                                                             {
                                                                 @l.AuthorName
                                                             }
@@ -71,17 +71,13 @@
                                                             {
                                                                 <p>Admin</p>
                                                             }
-                                                        }
-                                                    </div>
-                                                    <div class="nk-tb-col col-3 text-center">
-                                                        @l.CatName
-                                                    </div>
-                                                    <div class="nk-tb-col col-3 text-center">
-                                                        @l.OpenDate
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
+                                                        </td>
+                                                        <td>@l.CatName</td>
+                                                        <td>@l.OpenDate.ToString().Split(' ')[0]</td>
+                                                    </tr>
+                                                 }
+                                            </tbody>
+                                        </table>
                                         @*<div class="data">
                                             <div class="data-group">
                                                 <div class="amount">1,945</div>
@@ -101,18 +97,39 @@
                                     <div class="card-inner">
                                         <div class="card-title-group">
                                             <div class="card-title">
-                                                <h6 class="title">Today Revenue</h6>
+                                                <h6 class="title">Top 5 Most Like Posts</h6>
                                             </div>
                                         </div>
-                                        <div class="data">
-                                            <div class="data-group">
-                                                <div class="amount">$2,338</div>
-                                                <div class="nk-ecwg6-ck">
-                                                    <canvas class="ecommerce-line-chart-s3" id="todayRevenue"></canvas>
-                                                </div>
-                                            </div>
-                                            <div class="info"><span class="change down text-danger"><em class="icon ni ni-arrow-long-down"></em>2.34%</span><span> vs. last week</span></div>
-                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <td>Title</td>
+                                                    <td>Author Name</td>
+                                                    <td>Cat Name</td>
+                                                    <td>Like</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                 @foreach(var l in ViewBag.Liked)
+                                                 {
+                                                    <tr>
+                                                        <td>@l.Title</td>
+                                                        <td>
+                                                            @if(@l.AuthorName != null)
+                                                            {
+                                                                @l.AuthorName
+                                                            }
+                                                            else
+                                                            {
+                                                                <p>Admin</p>
+                                                            }
+                                                        </td>
+                                                        <td>@l.CatName</td>
+                                                        <td>@l.Like</td>
+                                                    </tr>
+                                                 }
+                                            </tbody>
+                                        </table>
                                     </div><!-- .card-inner -->
                                 </div><!-- .nk-ecwg -->
                             </div><!-- .card -->

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System.Security.Claims;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
@@ -75,6 +77,8 @@ namespace WebEnterprise.Controllers
                             CatId = c.Id,
                             CatName = c.Name,
                             AuthorName = u.UserName,
+                            Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
+                            DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
                         };
             if (!String.IsNullOrEmpty(keyword))
             {
@@ -136,30 +140,6 @@ namespace WebEnterprise.Controllers
 
         }
 
-        public IActionResult Like(int id)
-        {
-            int count = 0;
-            var user = context.UserLikePosts.Where(x => x.Id == id).Select(x => new UserLikePost
-            {
-                UserId= x.UserId,
-                PostId= x.PostId,
-                Status = x.Status
-            }).ToList();
-            foreach(var l in user)
-            {
-                if(l.Status == true)
-                {
-                    count++;
-                }
-                else
-                {
-                    count--;
-                }
-            }
-            return View(count);
-        }
-
-
         public IActionResult EditPost(int id)
         {
             var post = context.Posts.Where(u => u.Id == id).Select(u => new PostDTO
@@ -215,6 +195,46 @@ namespace WebEnterprise.Controllers
                 TempData["message"] = $"Successfully Delete Post {post.Title}";
             }
             return RedirectToAction("Index");
+        }
+
+        public FileResult Export()
+        {
+            var posts = (from p in context.Posts
+                        join u in context.Users on p.UserId equals u.Id
+                        join c in context.Categories on p.CateId equals c.Id
+                        select new PostDTO
+                        {
+                            Id = p.Id,
+                            Title = p.Title,
+                            Description = p.Description,
+                            CatId = c.Id,
+                            CatName = c.Name,
+                            AuthorName = u.UserName,
+                            Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
+                            DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
+                        }).ToList();
+
+            FileInfo template = new FileInfo(@"wwwroot/template/Post.xlsx");
+
+            using(ExcelPackage excel = new ExcelPackage(template))
+            {
+                ExcelWorksheet worksheet = excel.Workbook.Worksheets[0];
+                var row = 2;
+                foreach(var post in posts)
+                {
+                    worksheet.Cells[row, 1].Value = post.Title;
+                    worksheet.Cells[row, 2].Value = post.Description;
+                    worksheet.Cells[row, 3].Value = post.CatName;
+                    worksheet.Cells[row, 4].Value = post.AuthorName;
+                    worksheet.Cells[row, 5].Value = post.Like;
+                    worksheet.Cells[row, 6].Value = post.DisLike;
+
+                    row++;
+                }
+                string contentType = "";
+                new FileExtensionContentTypeProvider().TryGetContentType(template.FullName, out contentType);
+                return File(excel.GetAsByteArray(), contentType);
+            }
         }
     }
 }

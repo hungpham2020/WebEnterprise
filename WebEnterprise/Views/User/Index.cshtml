@@ -15,22 +15,10 @@
     }
     var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
-
 <!DOCTYPE html>
 <html>
 <head>
     <style>
-        body {
-            background-color: GrayText;
-        }
-
-        h1 {
-            color: beige;
-        }
-
-        p {
-            color: red;
-        }
 
         .Add {
             margin-left: 80%;
@@ -40,61 +28,51 @@
     </style>
 </head>
 
-<h1>
-    this is post
+<h1 class="text-center">
+    View Posts
 </h1>
 
-<div class="nk-content ">
-    <div class="style">
 @if (TempData["message"] != null)
 {
     ViewBag.Message = TempData["message"];
 }
 @Html.Partial("_Message")
-</div>
-<br />
-    
 
-
-    <div class="Add">
-        <li class="nk-block-tools-opt">
-            <a data-target="addpost" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
-            <a data-target="addpost" class="toggle btn btn-info " style=" color:white"><em class="icon ni ni-plus"></em><span>Add Post</span></a>
-        </li>
+<div class="nk-content ">
+    <div class="nk-block-head-content">
+        <ul class="nk-block-tools">
+            <li class="nk-block-tools-opt">
+                <a data-target="addpost" class="toggle btn btn-info " style=" color:white"><em class="icon ni ni-plus"></em><span>Add Post</span></a>
+            </li>
+        </ul>
     </div>
+</div>
 
-    <div class="container-fluid">
+<div class="nk-block">
+    <div class="card-inner-group">
         <div class="nk-content-inner">
 
             <div class="nk-content-body">
-
-
-
                 @foreach (var item in Model)
                 {
-                    <div class="col-xxl-6">
+                    <div class="col-xxl-6 mb-2">
                         <div class="card h-100">
                             <div class="card-inner">
                                 <div class="card-title-group align-start gx-3 mb-3">
                                     <div class="card-title">
                                         <h6 class="title">@Html.DisplayFor(modelItem => item.Title)</h6>
-                                        <span class="tb-sub">
-                                            @Html.DisplayFor(modelItem => item.AuthorName)
+                                        <span class="tb-sub">By
+                                            @if (!string.IsNullOrEmpty(item.AuthorName))
+                                            {
+                                                @Html.DisplayFor(modelItem => item.AuthorName)
+                                            }
+                                            else
+                                            {
+                                                <span>Admin</span>
+                                            }
                                         </span>
 
-                                        <p>@Html.DisplayFor(modelItem => item.OpenDate)</p>
-                                    </div>
-                                    <div class="card-tools">
-                                        <div class="dropdown">
-                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-toggle="dropdown"><em class="icon ni ni-download-cloud"></em><span><span class="d-none d-md-inline">Download</span> Report</span></a>
-                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-toggle="dropdown"><em class="icon ni ni-download-cloud"></em></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul class="link-list-opt no-bdr">
-                                                    <li><a href="#"><span>Download Mini Version</span></a></li>
-                                                    <li><a href="#"><span>Download Full Version</span></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
+                                        <p>On @Html.DisplayFor(modelItem => item.OpenDate)</p>
                                     </div>
                                 </div>
 
@@ -103,22 +81,7 @@
 
                                     <div class="nk-tb-col">
                                         <span class="tb-sub">
-                                            <h8>
-                                                @Html.DisplayFor(modelItem => item.Description)
-                                                ------------------------------------------------------------
-                                                #gre_cfs125752
-                                                GẤP
-                                                em chào ac ạ, em là 2k4 đang có quan tâm đến Greenwich, mong là các vị tiền có thể giải đáp giúp em một số câu hỏi sau chứ em giờ đang rối bời lắm ạ :((
-                                                1, học truyền thông tại Greenwich so với các trường công khác (như ajc, hanu, xhnv,..) thế nào ạ?
-                                                2, em tham khảo thấy học phí ở cơ sở ĐN, CT được giảm 30%, cho em hỏi là học tại các campus khác nhau thì có gì khác mà lại chênh giá thế ạ?
-                                                3, marketing và truyền thông thì nên theo ngành nào tốt hơn ạ?
-                                                4, ngoài học bổng đầu vào ra trong quá trình học liệu có cơ hội để lấy học bổng k ạ?
-                                                5, em xin review của các tiền bối về chất lượng giảng dạy và quá trình học tập ở G đc k ạ :((
-                                                6, trong quá trình học có cơ hội để apply nhận cv thực tập k ạ
-                                                7, bao nhiêu ielts thì được miễn học lớp dự bị tiếng anh thế ạ?
-                                                Hic em mong là mng có thể giải đáp giúp em ạ, em cảm ơn ac rất rất nhiều ạaa 🥰🥰
-                                            </h8>
-                                            @*@Html.DisplayFor(modelItem => item.Description)*@
+                                            @Html.DisplayFor(modelItem => item.Description)
                                         </span>
                                     </div>
 
@@ -136,47 +99,46 @@
                         <div id="Placeholder"></div>
 
                             @*-----------Like and comment-------------*@
-                            <center>
-                                <table>
-                                    <tr class="btn-parent">
-                                        <th scope="col"></th>
-                                        <th scope="col">
-                                            <input hidden value="@item.Id" class="post-id" />
+                            <div>
+                                <div class="btn-parent row text-center">
+                                    <div class="col-2 ml-2">
+                                        <div class="row">
+                                            <div class="col">Like: @item.Like</div>
+                                            <div class="col">DisLike: @item.DisLike</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-9 text-center">
+                                        <input hidden value="@item.Id" class="post-id" />
+                                        @if (item.Status == true)
+                                        {
+                                            <button type="button" class="btn btn-primary" disabled>
+                                                Liked
+                                            </button>
+                                        }
+                                        else if (item.Status == false)
+                                        {
+                                            <button type="button" class="btn btn-primary" disabled>
+                                                DisLiked
+                                            </button>
+                                        }
+                                        else
+                                        {
                                             <button type="button" class="btn btn-primary btn-like">
                                                 Like
                                             </button>
                                             <button type="button" class="btn btn-primary btn-dislike">
-                                                Dislike
+                                                DisLike
                                             </button>
-                                        </th>
-                                        <th scope="col"></th>
-                                        <th scope="col"></th>
-                                        <th scope="col"></th>
-                                        <th scope="col">
-                                            <button class="btn btn-info">
-                                                @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
-                                            </button>
-                                        </th>
-                                        <th scope="col"></th>
-                                        <th scope="col"></th>
-                                        <th scope="col"></th>
-                                       
-                                    </tr>
-                                </table>
-                            </center>
+                                        }
+                                        <button class="btn btn-info">
+                                            @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
+                                        </button>
+                                    </div>
+                                    <div class="col-1"></div>
+                                </div>
+                            </div>
 
                         </div><!-- .col -->
-
-                    <table>
-                            <tr>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                            </tr>
-                        </table>
 
                     </div>
                 }
@@ -218,8 +180,8 @@
                                             <li class="nk-menu-item has-sub">
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio"
-                                                       value="@r.Id" id="@r.Name" name="CatIds"
-                                                       @(selectedids.Contains(r.Id) ? "checked" : string.Empty) />
+                                                        value="@r.Id" id="@r.Name" name="CatIds"
+                                                        @(selectedids.Contains(r.Id) ? "checked" : string.Empty) />
                                                     <label class="form-check-label" for="@r.Name">
                                                         @r.Name
                                                     </label>
@@ -255,72 +217,65 @@
 
 
 
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
 
 
 @section Scripts{
-<script type="text/javascript">
-    $(function() {
-      $( "i" ).click(function() {
-        $( "i,span" ).toggleClass( "press", 1000 );
-      });
-    });
+    <script type="text/javascript">
+        $(function() {
+          $( "i" ).click(function() {
+            $( "i,span" ).toggleClass( "press", 1000 );
+          });
+        });
 
-    $(document).ready(function() {
-        $('.btn-like').click(function(){
-            var parent = $(this).parents('.btn-parent')
-            var postId = parent.find('.post-id').val()
-            var userId = "@userid"
-            var thisEl = $(this)
-            var data = {
-                "postId": postId,
-                "userId": userId,
-            }
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("Like", "User")',
-                data: req = JSON.stringify(data),
-                cache: false,
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                processData: false,
-                success: function(res){
-                    thisEl.text("Liked")
-                    thisEl.attr('disabled', true)
-                    parent.find('.btn-dislike').hide()
+        $(document).ready(function() {
+            $('.btn-like').click(function(){
+                var parent = $(this).parents('.btn-parent')
+                var postId = parent.find('.post-id').val()
+                var userId = "@userid"
+                var thisEl = $(this)
+                var data = {
+                    "postId": postId,
+                    "userId": userId,
                 }
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Like", "User")',
+                    data: req = JSON.stringify(data),
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function(res){
+                        thisEl.text("Liked")
+                        thisEl.attr('disabled', true)
+                        parent.find('.btn-dislike').hide()
+                    }
+                })
+            })
+            $('.btn-dislike').click(function(){
+                var parent = $(this).parents('.btn-parent')
+                var postId = parent.find('.post-id').val()
+                var userId = "@userid"
+                var thisEl = $(this)
+                var data = {
+                    "postId": postId,
+                    "userId": userId,
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("DisLike", "User")',
+                    data: req = JSON.stringify(data),
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function(res){
+                        thisEl.text("DisLiked")
+                        thisEl.attr('disabled', true)
+                        parent.find('.btn-like').hide()
+                    }
+                })
             })
         })
-        $('.btn-dislike').click(function(){
-            var parent = $(this).parents('.btn-parent')
-            var postId = parent.find('.post-id').val()
-            var userId = "@userid"
-            var thisEl = $(this)
-            var data = {
-                "postId": postId,
-                "userId": userId,
-            }
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("DisLike", "User")',
-                data: req = JSON.stringify(data),
-                cache: false,
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                processData: false,
-                success: function(res){
-                    thisEl.text("DisLiked")
-                    thisEl.attr('disabled', true)
-                    parent.find('.btn-like').hide()
-                }
-            })
-        })
-    })
-</script>
+    </script>
 }

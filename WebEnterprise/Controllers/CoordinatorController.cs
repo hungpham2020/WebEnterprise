@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
@@ -18,6 +19,31 @@ namespace WebEnterprise.Controllers
             userManager = _userManager;
             context = _context;
         }
+
+        private List<Department> LoadDepartment(string form)
+        {
+            if (form == null)
+            {
+                return null;
+            }
+            else
+            {
+                var selected = form.Split(',').Select(id => Int32.Parse(id)).ToArray();
+                return context.Departments.Where(c => selected.Contains(c.Id)).ToList();
+            }
+        }
+
+        private void ViewDepartment()
+        {
+            ViewBag.Department = context.Departments.ToList();
+        }
+
+        private void ViewDepart()
+        {
+            var departments = context.Departments.Select(x => x).ToList();
+            ViewBag.Departments = new SelectList(departments, "Id", "Name");
+        }
+
         public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
         {
             pageIndex = pageIndex ?? 1;
@@ -47,21 +73,27 @@ namespace WebEnterprise.Controllers
             coordinators.ToList();
 
             ViewBag.Paging = paging;
+            ViewDepartment();
 
             return View(coordinators);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCoordinator(string fullname, string username, string email)
+        public async Task<IActionResult> AddCoordinator(string fullname, string username, string email, IFormCollection f)
         {
             if (ModelState.IsValid)
             {
+                var depart = LoadDepartment(f["DepartmentIds"]);
                 var account = new CustomUser
                 {
                     UserName = username,
                     FullName = fullname,
-                    Email = email
+                    Email = email,
                 };
+                foreach (var d in depart)
+                {
+                    account.DepartmentId = d.Id;
+                }
                 var result = await userManager.CreateAsync(account, "Abc@12345");
                 if (result.Succeeded)
                 {
@@ -87,6 +119,7 @@ namespace WebEnterprise.Controllers
             {
                 return RedirectToAction("Index");
             }
+            ViewDepart();
             return View(coordinator);
         }
 
@@ -107,7 +140,8 @@ namespace WebEnterprise.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return BadRequest();
+            ViewDepart();
+            return View(res);
         }
 
         public IActionResult DeleteCoordinator(string id)
