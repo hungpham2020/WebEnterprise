@@ -186,7 +186,7 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditPost(PostDTO res)
+        public IActionResult EditPost(PostDTO res)
         {
             var post = context.Posts.Find(res.Id);
             if (post != null)

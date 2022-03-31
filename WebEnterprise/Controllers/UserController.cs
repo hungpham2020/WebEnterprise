@@ -246,7 +246,7 @@ namespace WebEnterprise.Controllers
 
                        if(user != null && post.Title != null)
                         {
-                            note.description = $"{user.UserName} add new post {post.Title}";
+                            note.description = $"{user.FullName} add new post {post.Title}";
                             note.date = DateTime.Now;
                             note.UserId = post.UserId;
 
@@ -337,7 +337,7 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public IActionResult Like([FromBody] UserLikePost req)
         {
-            var userPost = context.UserLikePosts.Where(u => u.UserId == req.UserId && u.PostId == req.PostId && u.Status == true).FirstOrDefault();
+            var userPost = context.UserLikePosts.FirstOrDefault(u => u.UserId == req.UserId && u.PostId == req.PostId);
             if (userPost == null)
             {
                 var userLike = new UserLikePost
@@ -350,13 +350,19 @@ namespace WebEnterprise.Controllers
                 context.SaveChanges();
                 return Json(userLike);
             }
-            return null;
+            else
+            {
+                userPost.Status = req.Status;
+                context.Update(userPost);
+                context.SaveChanges();
+                return Json(userPost);
+            }
         }
 
         [HttpPost]
         public IActionResult DisLike([FromBody] UserLikePost req)
         {
-            var userPost = context.UserLikePosts.Where(u => u.UserId == req.UserId && u.PostId == req.PostId && u.Status == false).FirstOrDefault();
+            var userPost = context.UserLikePosts.FirstOrDefault(u => u.UserId == req.UserId && u.PostId == req.PostId);
             if(userPost == null)
             {
                 var userLike = new UserLikePost
@@ -369,7 +375,13 @@ namespace WebEnterprise.Controllers
                 context.SaveChanges();
                 return Json(userLike);
             }
-            return null;
+            else
+            {
+                userPost.Status = req.Status;
+                context.Update(userPost);
+                context.SaveChanges();
+                return Json(userPost);
+            }
         }
 
         private void Notifiation()
