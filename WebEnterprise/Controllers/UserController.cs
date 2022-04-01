@@ -295,7 +295,7 @@ namespace WebEnterprise.Controllers
             var post = context.Posts.Find(res.Id);
             if (post != null)
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid) 
                 {
                     post.Id = res.Id;
                     post.Title = res.Title;
@@ -304,9 +304,6 @@ namespace WebEnterprise.Controllers
                     post.ClosedDate = res.ClosedDate;
                     post.CateId = res.CatId;
 
-                    //string extension = Path.GetExtension(res.FileUpload.FileName);
-                    //string newname = post.Title + extension;
-                    //post.File = await FileControl.UploadFile(res.FileUpload, @"postFiles\", newname.ToLower());
                     context.Entry(post).State = EntityState.Modified;
                     context.SaveChanges();
                     TempData["message"] = $"Successfully Edit Post {post.Title}";
