@@ -4,15 +4,15 @@
 <html lang="zxx" class="js">
 
 <div class="style">
-@if (TempData["message"] != null)
-{
-    ViewBag.Message = TempData["message"];
-}
-@{
-    PostDTO post = ViewBag.Post;
-    var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-}
-@Html.Partial("_Message")
+    @if (TempData["message"] != null)
+    {
+        ViewBag.Message = TempData["message"];
+    }
+    @{
+        PostDTO post = ViewBag.Post;
+        var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
+    @Html.Partial("_Message")
 </div>
 <body class="nk-body bg-lighter npc-general has-sidebar ">
 
@@ -26,13 +26,14 @@
             <div class="nk-content-inner">
                 <div class="nk-content-body">
 
-                    <div class="col-xxl-6 mb-2">
+                    <div class="col mb-2">
                         <div class="card h-100">
                             <div class="card-inner">
                                 <div class="card-title-group align-start gx-3 mb-3">
                                     <div class="card-title">
                                         <h6 class="title">@post.Title</h6>
-                                        <span class="tb-sub">By
+                                        <span class="tb-sub">
+                                            By
                                             @if (string.IsNullOrEmpty(@post.AuthorName))
                                             {
                                                 <span>Admin</span>
@@ -62,40 +63,61 @@
                             </div><!-- .card -->
 
 
-                        <div id="Placeholder"></div>
+                            <div id="Placeholder"></div>
 
                             @*-----------Like and comment-------------*@
                             <div>
                                 <div class="btn-parent row text-center">
                                     <div class="col-12 text-center">
                                         <input hidden value="@post.Id" class="post-id" />
-                                        <button type="button" class="btn btn-primary btn-like" data-status=@(post.Status == true ? "true": post.Status == false ? "false": null)>
+                                        @if(post.Status == null)
+                                        {
+                                            <button type="button" class="btn btn-primary btn-like" data-status=@(post.Status == true ? "true": post.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@post.Like</span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-dislike" data-status=@(post.Status == true ? "true": post.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@post.DisLike</span>
+                                            </button>
+                                        }
+                                        @if (post.Status == true)
+                                        {
+                                            <button type="button" class="btn btn-success btn-like" data-status=@(post.Status == true ? "true": post.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@post.Like</span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-dislike" data-status=@(post.Status == true ? "true": post.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@post.DisLike</span>
+                                            </button>
+                                        }
+                                        @if(post.Status == false)
+                                        {
+                                            <button type="button" class="btn btn-primary btn-like" data-status=@(post.Status == true ? "true": post.Status == false ? "false": null)>
                                             <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@post.Like</span>
-                                        </button>
-                                        <button type="button" class="btn btn-primary btn-dislike" data-status=@(post.Status == true ? "true": post.Status == false ? "false": null)>
-                                            <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@post.DisLike</span>
-                                        </button>
+                                            </button>
+                                            <button type="button" class="btn btn-success btn-dislike" data-status=@(post.Status == true ? "true": post.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@post.DisLike</span>
+                                            </button>
+                                        }
                                         <a data-target="comment" class="toggle btn btn-secondary d-none d-md-inline-flex" style="color:white">Comment</a>
                                     </div>
-@*                                    <div class="col-1">
+                                    @*                                    <div class="col-1">
                                         <div class="nk-tb-col nk-tb-col-tools">
-                                            <ul class="nk-tb-actions gx-1 my-n1">
-                                                <li class="mr-n1">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                            <ul class="link-list-opt no-bdr">
-                                                                <li><span>@Html.ActionLink("Edit", "EditPost", new { id = item.Id })</span></li>
-                                                                <li><span>@Html.ActionLink("Delete", "DeletePost", new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                         </div>
-                                     </div>*@
+                                        <ul class="nk-tb-actions gx-1 my-n1">
+                                        <li class="mr-n1">
+                                        <div class="dropdown">
+                                        <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                        <ul class="link-list-opt no-bdr">
+                                        <li><span>@Html.ActionLink("Edit", "EditPost", new { id = item.Id })</span></li>
+                                        <li><span>@Html.ActionLink("Delete", "DeletePost", new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
+                                        </ul>
+                                        </div>
+                                        </div>
+                                        </li>
+                                        </ul>
+                                        </div>
+                                        </div>*@
 
-                                    
+
                                 </div>
                             </div>
 
@@ -245,83 +267,92 @@
             $('#EditComment').attr('action', item[3]);
         });
         $('.btn-like').click(function(){
-            var parent = $(this).parents('.btn-parent')
-            var postId = parent.find('.post-id').val()
-            var userId = "@userid"
-            var thisEl = $(this)
-            var status = $(this).data("status")
+                var parent = $(this).parents('.btn-parent')
+                var postId = parent.find('.post-id').val()
+                var userId = "@userid"
+                var thisEl = $(this)
+                var status = $(this).data("status")
 
-            var data = {
-                "postId": postId,
-                "userId": userId,
-                "status": status === true ? null: true
-            }
+                var data = {
+                    "postId": postId,
+                    "userId": userId,
+                    "status": status === true ? null: true
+                }
                 
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("Like", "User")',
-                data: req = JSON.stringify(data),
-                cache: false,
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                processData: false,
-                success: function(res){
-                    var oldNumber = parseInt(thisEl.find("span").text());
-                    if (res.status) {
-                        thisEl.find("span").text(oldNumber + 1)
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Like", "User")',
+                    data: req = JSON.stringify(data),
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function(res){
+                        var oldNumber = parseInt(thisEl.find("span").text());
+                        if (res.status) {
+                            thisEl.find("span").text(oldNumber + 1)
+                            thisEl.removeClass().addClass("btn btn-success btn-like")
+                            thisEl.parent().find(".btn-dislike").removeClass().addClass("btn btn-primary btn-dislike")
+                        }
+                        else
+                        {
+                            thisEl.find("span").text(oldNumber - 1)
+                            thisEl.removeClass().addClass("btn btn-primary btn-like")
+                            thisEl.parent().find(".btn-dislike").removeClass().addClass("btn btn-primary btn-dislike")
+                        }
+                        if (status === false) {
+                            var oldDisNumber = parseInt(thisEl.parent().find(".btn-dislike").find("span").text());
+                            thisEl.parent().find(".btn-dislike").find("span").text(oldDisNumber - 1)
+                        }
+                        thisEl.data("status", res.status)
+                        thisEl.parent().find(".btn-dislike").data("status", res.status)
                     }
-                    else
-                    {
-                        thisEl.find("span").text(oldNumber - 1)
-                    }
-                    if (status === false) {
-                        var oldDisNumber = parseInt(thisEl.parent().find(".btn-dislike").find("span").text());
-                        thisEl.parent().find(".btn-dislike").find("span").text(oldDisNumber - 1)
-                    }
-                    thisEl.data("status", res.status)
-                    thisEl.parent().find(".btn-dislike").data("status", res.status)
-                }
+                })
             })
-        })
-        $('.btn-dislike').click(function(){
-            var parent = $(this).parents('.btn-parent')
-            var postId = parent.find('.post-id').val()
-            var userId = "@userid"
-            var thisEl = $(this)
-            var status = $(this).data("status")
-            console.log(status);
-            var data = {
-                "postId": postId,
-                "userId": userId,
-                "status": status === false ? null: false
-            }
+            $('.btn-dislike').click(function(){
+                var parent = $(this).parents('.btn-parent')
+                var postId = parent.find('.post-id').val()
+                var userId = "@userid"
+                var thisEl = $(this)
+                var status = $(this).data("status")
+                console.log(status);
+                var data = {
+                    "postId": postId,
+                    "userId": userId,
+                    "status": status === false ? null: false
+                }
 
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("DisLike", "User")',
-                data: req = JSON.stringify(data),
-                cache: false,
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                processData: false,
-                success: function(res){
-                    var oldNumber = parseInt(thisEl.find("span").text());
-                    if (res.status === false) {
-                        thisEl.find("span").text(oldNumber + 1)
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("DisLike", "User")',
+                    data: req = JSON.stringify(data),
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function(res){
+                        var oldNumber = parseInt(thisEl.find("span").text());
+                        if (res.status === false) {
+                            thisEl.find("span").text(oldNumber + 1)
+                            thisEl.removeClass().addClass("btn btn-success btn-dislike")
+                            thisEl.parent().find(".btn-like").removeClass().addClass("btn btn-primary btn-like")
+                        }
+                        else
+                        {
+                            thisEl.find("span").text(oldNumber - 1)
+                            thisEl.parent().find(".btn-like").removeClass().addClass("btn btn-primary btn-like")
+                            thisEl.removeClass().addClass("btn btn-primary btn-dislike")
+                        }
+                        if (status === true) {
+                            var oldLikeNumber = parseInt(thisEl.parent().find(".btn-like").find("span").text());
+                            console.log(oldLikeNumber)
+                            thisEl.parent().find(".btn-like").find("span").text(oldLikeNumber - 1)
+                        }
+                        thisEl.data("status", res.status)
+                        thisEl.parent().find(".btn-like").data("status", res.status)
                     }
-                    else
-                    {
-                        thisEl.find("span").text(oldNumber - 1)
-                    }
-                    if (status === true) {
-                        var oldLikeNumber = parseInt(thisEl.parent().find(".btn-like").find("span").text());
-                        thisEl.parent().find(".btn-like").find("span").text(oldLikeNumber - 1)
-                    }
-                    thisEl.data("status", res.status)
-                    thisEl.parent().find(".btn-like").data("status", res.status)
-                }
+                })
             })
-        })
     });
 
 </script>

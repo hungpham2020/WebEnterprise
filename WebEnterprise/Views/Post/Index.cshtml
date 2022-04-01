@@ -41,10 +41,12 @@
                                     <div class="toggle-expand-content" data-content="pageMenu">
                                         <ul class="nk-block-tools g-3">
                                             <li>
-                                                <form class="form-control-wrap" asp-route-pageIndex="@ViewBag.PageIndex" asp-route-pageSize="@ViewBag.PageSize" asp-route-keyword="">
-                                                    <input type="text" class="form-control" name="keyword" id="search" placeholder="Search by name">
-                                                    <button type="submit" class="form-icon form-icon-right btn" ><em class="icon ni ni-search"></em></button>
-                                                </form>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="search" placeholder="Search">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-success d-md-inline-flex" id="btn-search"><em class="icon ni ni-search"></em></button>
+                                                    </div>
+                                                </div>
                                             </li>
                                             <li class="nk-block-tools-opt">
                                                 <a data-target="addpost" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
@@ -217,3 +219,29 @@
 
 </body>
 </html>
+@section scripts{
+    <script>
+        $(document).ready(function(){
+            $('#btn-search').click(function(){
+                var urlSearchParams = new URLSearchParams(window.location.search)
+                var params = []
+                Object.entries(Object.fromEntries(urlSearchParams.entries())).map(([key, value]) => {
+                    params[key.toLowerCase()] = value
+                })
+
+                params['keyword'] = $('#search').val()
+                params['pagesize']
+                params['pageindex']
+
+                url = window.location.href.split('?')[0] + '?'
+
+                Object.keys(params).map(key => {
+                    url += `${key}=${params[key]}&`
+                })
+                
+                url = url.substr(0, url.length - 1)
+                window.location.href = url
+            })
+        })
+    </script>
+}

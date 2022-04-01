@@ -56,7 +56,7 @@
 
                 @foreach (var item in Model)
                 {
-                    <div class="col-xxl-6 mb-2">
+                    <div class="col mb-2">
                         <div class="card h-100">
                             <div class="card-inner">
                                 <div class="card-title-group align-start gx-3 mb-3">
@@ -104,12 +104,33 @@
                                 <div class="btn-parent row text-center">
                                     <div class="col-12 text-center">
                                         <input hidden value="@item.Id" class="post-id" />
-                                        <button type="button" class="btn btn-primary btn-like" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                        @if(item.Status == null)
+                                        {
+                                            <button type="button" class="btn btn-light btn-like" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@item.Like</span>
+                                            </button>
+                                            <button type="button" class="btn btn-light btn-dislike" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@item.DisLike</span>
+                                            </button>
+                                        }
+                                        @if (item.Status == true)
+                                        {
+                                            <button type="button" class="btn btn-success btn-like" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@item.Like</span>
+                                            </button>
+                                            <button type="button" class="btn btn-light btn-dislike" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@item.DisLike</span>
+                                            </button>
+                                        }
+                                        @if(item.Status == false)
+                                        {
+                                            <button type="button" class="btn btn-light btn-like" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
                                             <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@item.Like</span>
-                                        </button>
-                                        <button type="button" class="btn btn-primary btn-dislike" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
-                                            <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@item.DisLike</span>
-                                        </button>
+                                            </button>
+                                            <button type="button" class="btn btn-success btn-dislike" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@item.DisLike</span>
+                                            </button>
+                                        }
                                         <button class="btn btn-info">
                                             @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
                                         </button>
@@ -202,17 +223,21 @@
                                 </div>
 
                                 <div class="modal-body">
-                                    Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                                    quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+                                    <div>
+                                        Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+                                        quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
 
-                                    Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
+                                        Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
 
-                                    Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+                                        Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+                                    </div>
+                                    <input type="checkbox" name="accept" id="accept"/>
+                                    <label for="accept">Accept terms</label>
                                 </div>
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-secondary">Accept</button>
+                                    <button type="submit" class="btn btn-success" id="btn-accept" disabled>Accept</button>
                                 </div>
 
 
@@ -235,6 +260,15 @@
         });
 
         $(document).ready(function() {
+            $('#accept').click(function(){
+                var check = $('#accept').is(":checked")
+                if(check){
+                    $('#btn-accept').removeAttr('disabled')
+                }
+                else{
+                    $('#btn-accept').attr('disabled', true)
+                }
+            })
             $('.btn-like').click(function(){
                 var parent = $(this).parents('.btn-parent')
                 var postId = parent.find('.post-id').val()
@@ -260,10 +294,14 @@
                         var oldNumber = parseInt(thisEl.find("span").text());
                         if (res.status) {
                             thisEl.find("span").text(oldNumber + 1)
+                            thisEl.removeClass().addClass("btn btn-success btn-like")
+                            thisEl.parent().find(".btn-dislike").removeClass().addClass("btn btn-light btn-dislike")
                         }
                         else
                         {
                             thisEl.find("span").text(oldNumber - 1)
+                            thisEl.removeClass().addClass("btn btn-light btn-like")
+                            thisEl.parent().find(".btn-dislike").removeClass().addClass("btn btn-light btn-dislike")
                         }
                         if (status === false) {
                             var oldDisNumber = parseInt(thisEl.parent().find(".btn-dislike").find("span").text());
@@ -299,13 +337,18 @@
                         var oldNumber = parseInt(thisEl.find("span").text());
                         if (res.status === false) {
                             thisEl.find("span").text(oldNumber + 1)
+                            thisEl.removeClass().addClass("btn btn-success btn-dislike")
+                            thisEl.parent().find(".btn-like").removeClass().addClass("btn btn-light btn-like")
                         }
                         else
                         {
                             thisEl.find("span").text(oldNumber - 1)
+                            thisEl.parent().find(".btn-like").removeClass().addClass("btn btn-light btn-like")
+                            thisEl.removeClass().addClass("btn btn-light btn-dislike")
                         }
                         if (status === true) {
                             var oldLikeNumber = parseInt(thisEl.parent().find(".btn-like").find("span").text());
+                            console.log(oldLikeNumber)
                             thisEl.parent().find(".btn-like").find("span").text(oldLikeNumber - 1)
                         }
                         thisEl.data("status", res.status)
