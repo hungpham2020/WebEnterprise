@@ -295,7 +295,7 @@ namespace WebEnterprise.Controllers
             var post = context.Posts.Find(res.Id);
             if (post != null)
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
                     post.Id = res.Id;
                     post.Title = res.Title;
