@@ -5,14 +5,29 @@
 
 @if(paging.TotalPages >= 1)
 {
-    <ul class="pagination mt-2">
+<ul class="pagination mt-2">
+    @if(paging.PageIndex > 1)
+    {
         <li class="page-item">
-            <a class="page-link" asp-route-pageIndex="@paging.PrevPage" asp-route-pageSize="@paging.PageSize" aria-label="Previous">
+            <button class="page-link changepage" data-pageIndex="@paging.PrevPage" data-pageSize="@paging.PageSize" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
-            </a>
+            </button>
         </li>
-        @for(int i = 1; i<= paging.TotalPages; i++)
+    }
+
+    @if(paging.TotalPages > 6 && paging.PageIndex > 4)
+    {
+        <li class="page-item">
+            <button data-pageIndex="1" data-pageSize="@paging.PageSize" class="page-link changepage">1</button>
+        </li>
+        <li class="page-item">
+            <button class="page-link">...</button>
+        </li>
+    }
+    @if(paging.TotalPages <= 6)
+    {
+        for(int i = 1; i<= paging.TotalPages; i++)
         {
             if (@paging.PageIndex == i)
             {
@@ -23,15 +38,107 @@
             else
             {
                 <li class="page-item">
-                    <a asp-route-pageIndex="@i" asp-route-pageSize="@paging.PageSize" class="page-link">@i</a>
+                    <button data-pageIndex="@i" data-pageSize="@paging.PageSize" class="page-link changepage">@i</button>
                 </li>
             }
         }
+    }
+    @if(paging.TotalPages > 6)
+    {
+        if(paging.PageIndex <= 4)
+        {
+            for(int i = 1; i <= 5; i++)
+            {
+                if(paging.PageIndex == i)
+                {
+                    <li class="page-item active">
+                        <button class="page-link">@i</button>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <button data-pageIndex="@i" data-pageSize="@paging.PageSize" class="page-link changepage">@i</button>
+                    </li>
+                }
+            }
+        }
+        else if(paging.PageIndex >= paging.TotalPages - 3)
+        {
+            for(int i = paging.TotalPages - 4 ; i <= paging.TotalPages; i++)
+            {
+                if(paging.PageIndex == i)
+                {
+                    <li class="page-item active">
+                        <button class="page-link">@i</button>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <button data-pageIndex="@i" data-pageSize="@paging.PageSize" class="page-link changepage">@i</button>
+                    </li>
+                }
+            }
+        }
+        else
+        {
+            for(int i = (int)paging.PageIndex - 2; i <= paging.PageIndex + 2; i++)
+            {
+                if(paging.PageIndex == i)
+                {
+                    <li class="page-item active">
+                        <button class="page-link">@i</button>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <button data-pageIndex="@i" data-pageSize="@paging.PageSize" class="page-link changepage">@i</button>
+                    </li>
+                }
+            }
+        }
+    }
+    @if(paging.TotalPages > 6 && paging.PageIndex < paging.TotalPages - 3)
+    {
         <li class="page-item">
-            <a class="page-link" asp-route-pageIndex="@paging.NextPage" asp-route-pageSize="@paging.PageSize" aria-label="Next">
+            <button class="page-link">...</button>
+        </li>
+        <li class="page-item">
+            <button data-pageIndex="@paging.TotalPages" data-pageSize="@paging.PageSize" class="page-link changepage">@paging.TotalPages</button>
+        </li>
+    }
+    @if(paging.PageIndex < paging.TotalPages)
+    {
+        <li class="page-item">
+            <button class="page-link changepage" data-pageIndex="@paging.NextPage" data-pageSize="@paging.PageSize" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
-            </a>
+            </button>
         </li>
-    </ul>
+    }
+</ul>
 }
+<script>
+    $(document).ready(() => {
+        $('.changepage').click(function() {
+            var urlSearchParams = new URLSearchParams(window.location.search)
+            var params = []
+            Object.entries(Object.fromEntries(urlSearchParams.entries())).map(([key, value]) => {
+                params[key.toLowerCase()] = value
+            })
+            params['pageindex'] = $(this).data("pageindex")
+            params['pagesize'] = $(this).data("pagesize")
+            params['keyword']
+
+            url = window.location.href.split('?')[0] + '?'
+            
+            Object.keys(params).map(key => {
+                url += `${key}=${params[key]}&`
+            })
+            url = url.substr(0, url.length - 1)
+            window.location.href = url
+        })
+    })
+</script>

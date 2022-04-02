@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebEnterprise.Data;
 
@@ -11,9 +12,10 @@ using WebEnterprise.Data;
 namespace WebEnterprise.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220331100058_ChangeTypeOfStatus")]
+    partial class ChangeTypeOfStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,14 +318,14 @@ namespace WebEnterprise.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1b03fd40-cf70-4c1c-a2a4-e9371e21ced5",
+                            ConcurrencyStamp = "1007abe3-c19b-4b56-a292-648080b0ffbb",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBPqw5XPXdwa+VM+InGoW8lreQCeVLsXKnuE+ZgWnpwXtkfUqpX2tRs4Cy8fVr9VSw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELsQQKAAOGZCKAqEQ/hpY29MjknekyxdYmKwRabI+YEAzQJYQPkJZrxKkku2/5ISRg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f3107973-74ba-4e4c-bddb-54ac5650178b",
+                            SecurityStamp = "fe13d50f-4cdd-420a-b375-154e281f77d1",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });
@@ -382,16 +384,16 @@ namespace WebEnterprise.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("CateId")
+                    b.Property<int>("CateId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ClosedDate")
+                    b.Property<DateTime>("ClosedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("OpenDate")
+                    b.Property<DateTime>("OpenDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
@@ -399,6 +401,7 @@ namespace WebEnterprise.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

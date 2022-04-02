@@ -55,9 +55,11 @@ namespace WebEnterprise.Controllers
                 cate.Description = description;
                 context.Categories.Add(cate);
                 context.SaveChanges();
+                TempData["message"] = $"Successfully Add new Category {cate.Name}";
                 return RedirectToAction("Index");
             }
-            return Content("Cannot Add");
+            TempData["message"] = $"Cannot Add Category";
+            return RedirectToAction("Index");
         }
 
         public IActionResult EditCat(int id)
@@ -78,6 +80,7 @@ namespace WebEnterprise.Controllers
             {
                 context.Entry(res).State = EntityState.Modified;
                 context.SaveChanges();
+                TempData["message"] = $"Successfully Edit Category {res.Name}";
                 return RedirectToAction("Index");
             }
             return View(res);
@@ -90,6 +93,7 @@ namespace WebEnterprise.Controllers
             {
                 context.Remove(cat);
                 context.SaveChanges();
+                TempData["message"] = $"Successfully Delete Category";
             }
             return RedirectToAction("Index");
         }

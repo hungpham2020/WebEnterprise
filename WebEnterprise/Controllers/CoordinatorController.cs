@@ -83,28 +83,32 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCoordinator(string fullname, string username, string email, IFormCollection f)
         {
-            if (ModelState.IsValid)
+            var depart = LoadDepartment(f["DepartmentIds"]);
+            if(depart != null)
             {
-                var depart = LoadDepartment(f["DepartmentIds"]);
-                var account = new CustomUser
+                if (ModelState.IsValid)
                 {
-                    UserName = username,
-                    FullName = fullname,
-                    Email = email,
-                };
-                foreach (var d in depart)
-                {
-                    account.DepartmentId = d.Id;
-                }
-                var result = await userManager.CreateAsync(account, "Abc@12345");
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(account, "Coordinator");
-                    TempData["message"] = $"Successfully Add new Coordinator {account.FullName}";
-                    return RedirectToAction("Index");
+                    var account = new CustomUser
+                    {
+                        UserName = username,
+                        FullName = fullname,
+                        Email = email,
+                    };
+                    foreach (var d in depart)
+                    {
+                        account.DepartmentId = d.Id;
+                    }
+                    var result = await userManager.CreateAsync(account, "Abc@12345");
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(account, "Coordinator");
+                        TempData["message"] = $"Successfully Add new Coordinator {account.FullName}";
+                        return RedirectToAction("Index");
+                    }
                 }
             }
-            return Content("Cannot Add");
+            TempData["message"] = $"Cannot Add Coordinator";
+            return RedirectToAction("Index");
         }
 
         public IActionResult EditCoordinator(string id)

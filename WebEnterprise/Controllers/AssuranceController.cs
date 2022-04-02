@@ -44,6 +44,12 @@ namespace WebEnterprise.Controllers
             var departments = context.Departments.Select(x => x).ToList();
             ViewBag.Departments = new SelectList(departments, "Id", "Name");
         }
+        private void SelectedDepart(string id)
+        {
+            var selected = context.Users.Where(x => x.Id == id).Select(x => x.DepartmentId).FirstOrDefault();
+            var departments = context.Departments.Select(x => x).ToList();
+            ViewBag.Departments = new SelectList(departments, "Id", "Name", selected);
+        }
 
         public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
         {
@@ -70,7 +76,7 @@ namespace WebEnterprise.Controllers
 
             var paging = new CommonPaging(assurances.Count(), pageIndex, pageSize);
 
-            assurances = assurances.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+            assurances = assurances.Skip((int)((pageIndex - 1) * pageSize)).Take((int)(pageSize));
 
             assurances.ToList();
             Notifiation();
@@ -83,25 +89,28 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public async Task<IActionResult>AddAssurance(string userName, string fullName, string email, IFormCollection f)
         {
-            if (ModelState.IsValid)
+            var depart = LoadDepartment(f["DepartmentIds"]);
+            if(depart != null)
             {
-                var depart = LoadDepartment(f["DepartmentIds"]);
-                var account = new CustomUser
+                if (ModelState.IsValid)
                 {
-                    UserName = userName,
-                    FullName = fullName,
-                    Email = email,
-                };
-                foreach (var d in depart)
-                {
-                    account.DepartmentId = d.Id;
-                }
-                var result = await userManager.CreateAsync(account, "Abc@12345");
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(account, "Assurance");
-                    TempData["message"] = $"Successfully Add new Assurance {account.FullName}";
-                    return RedirectToAction("Index");
+                    var account = new CustomUser
+                    {
+                        UserName = userName,
+                        FullName = fullName,
+                        Email = email,
+                    };
+                    foreach (var d in depart)
+                    {
+                        account.DepartmentId = d.Id;
+                    }
+                    var result = await userManager.CreateAsync(account, "Abc@12345");
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(account, "Assurance");
+                        TempData["message"] = $"Successfully Add new Assurance {account.FullName}";
+                        return RedirectToAction("Index");
+                    }
                 }
             }
             TempData["message"] = $"Cannot Add Assurance";
@@ -121,8 +130,8 @@ namespace WebEnterprise.Controllers
             {
                 return RedirectToAction("Index");
             }
-            ViewDepart();
             Notifiation();
+            SelectedDepart(id);
             return View(assurance);
         }
 
@@ -144,7 +153,7 @@ namespace WebEnterprise.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            ViewDepart();
+            SelectedDepart(res.Id);
             return View(res);
         }
 

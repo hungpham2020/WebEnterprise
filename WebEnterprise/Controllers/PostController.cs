@@ -124,14 +124,14 @@ namespace WebEnterprise.Controllers
             }
             if (res.CatId != 0)
             {
-                if (!ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     var post = new Post();
                     post.Title = res.Title;
                     post.Description = res.Description;
                     post.CateId = res.CatId;
                     post.OpenDate = DateTime.Now;
-                    post.ClosedDate = post.OpenDate.AddDays(14);
+                    post.ClosedDate = post.OpenDate?.AddDays(14);
                     post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                     var note = new Notification();
@@ -186,7 +186,7 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditPost(PostDTO res)
+        public IActionResult EditPost(PostDTO res)
         {
             var post = context.Posts.Find(res.Id);
             if (post != null)
