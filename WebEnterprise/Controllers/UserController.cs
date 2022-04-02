@@ -224,14 +224,14 @@ namespace WebEnterprise.Controllers
             }
               if(res.CatId != 0)
                 {
-                    if (!ModelState.IsValid)
+                    if (ModelState.IsValid)
                     {
                         var post = new Post();
                         post.Title = res.Title;
                         post.Description = res.Description;
                         post.CateId = res.CatId;
                         post.OpenDate = DateTime.Now;
-                        post.ClosedDate = post.OpenDate.AddDays(14);
+                        post.ClosedDate = post.OpenDate?.AddDays(14);
                         post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                         var note = new Notification();

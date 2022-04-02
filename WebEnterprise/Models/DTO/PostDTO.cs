@@ -15,18 +15,18 @@ namespace WebEnterprise.Models.DTO
         public string Description { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime OpenDate { get; set; }
+        public DateTime? OpenDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         [Date]
-        public DateTime ClosedDate { get; set; }
+        public DateTime? ClosedDate { get; set; }
 
         [Required]
-        public int CatId { get; set; }
+        public int? CatId { get; set; }
 
         public string? CatName { get; set; }
 
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         public string? AuthorName { get; set; }
 
