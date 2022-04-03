@@ -4,10 +4,6 @@
     Layout = "../Shared/_AdminLayout.cshtml";
 }
 
-@if (TempData["message"] != null)
-{
-    ViewBag.Message = TempData["message"];
-}
 @{
     List<int> selectedids = new List<int>();
     if (TempData["DepartmentIds"] != null)
@@ -17,8 +13,14 @@
     }
 }
 
+@if (TempData["message"] != null)
+{
+    ViewBag.Message = TempData["message"];
+}
+
 <!DOCTYPE html>
 <html lang="zxx" class="js">
+     @await Html.PartialAsync("_Message")
 <body class="nk-body bg-lighter npc-general has-sidebar ">
 
      <!-- main header  -->
