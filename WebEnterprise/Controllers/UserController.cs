@@ -1,18 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
+using WebEnterprise.Models.Common;
 using WebEnterprise.Models.DTO;
 
 
 namespace WebEnterprise.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
-
         private readonly UserManager<CustomUser> userManager;
         private readonly ApplicationDbContext context;
 
@@ -64,10 +66,14 @@ namespace WebEnterprise.Controllers
 
         //-----------------------------------
 
-        public IActionResult Index()
+        public IActionResult Index(int? pageIndex, int? pageSize, int? filter1)
         {
+            pageIndex = pageIndex ?? 1;
+            pageSize = pageSize ?? 10;
+            filter1 = filter1 ?? 0;
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var posts = (from p in context.Posts
+            var posts = from p in context.Posts
                          join u in context.Users on p.UserId equals u.Id
                          join c in context.Categories on p.CateId equals c.Id
                          select new PostDTO
@@ -82,8 +88,27 @@ namespace WebEnterprise.Controllers
                              Status = context.UserLikePosts.FirstOrDefault(x => x.UserId.Equals(userId) && x.PostId == p.Id).Status,
                              Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
                              DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
-                         }).ToList(); 
-            
+                         };
+            var paging = new CommonPaging(posts.Count(), pageIndex, pageSize);
+
+            posts = posts.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+            switch (filter1)
+            {
+                case 1:
+                    posts = posts.OrderByDescending(x => x.OpenDate);
+                    posts.ToList();
+                    break;
+                case 2:
+                    posts = posts.OrderByDescending(x => x.Like - x.DisLike);
+                    posts.ToList();
+                    break;
+                default:
+                    posts.ToList();
+                    break;
+            }
+
+            ViewBag.Paging = paging;
             ViewCat();
             Notifiation();
             return View(posts);

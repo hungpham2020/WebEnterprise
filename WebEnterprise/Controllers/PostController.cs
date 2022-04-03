@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using WebEnterprise.Models.DTO;
 
 namespace WebEnterprise.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PostController : Controller
     {
         private readonly ApplicationDbContext context;

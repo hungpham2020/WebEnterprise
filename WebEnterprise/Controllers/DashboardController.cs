@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
@@ -6,6 +7,7 @@ using WebEnterprise.Models.DTO;
 
 namespace WebEnterprise.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext context;

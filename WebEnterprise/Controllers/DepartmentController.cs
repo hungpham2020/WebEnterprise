@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.Common;
 
 namespace WebEnterprise.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DepartmentController : Controller
     {
         private readonly ApplicationDbContext context;

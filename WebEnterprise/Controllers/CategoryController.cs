@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebEnterprise.Data;
@@ -7,6 +8,7 @@ using WebEnterprise.Models.Common;
 
 namespace WebEnterprise.Controllers
 {
+    [Authorize(Roles = "Admin, Assurance, Coordinator")]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext context;

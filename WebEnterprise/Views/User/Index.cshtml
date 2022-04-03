@@ -38,13 +38,18 @@
 }
 @Html.Partial("_Message")
 
-<div class="nk-content ">
+<div class="nk-content px-2">
     <div class="nk-block-head-content">
         <ul class="nk-block-tools">
             <li class="nk-block-tools-opt">
                 <a data-target="addpost" class="toggle btn btn-info " style=" color:white"><em class="icon ni ni-plus"></em><span>Add Post</span></a>
             </li>
         </ul>
+    </div>
+    <div class="btn-group mt-4 align-center" role="group">
+      <button type="button" class="btn btn-outline-light justify-center" id="normal"><em class="icon ni ni-arrow-up"></em><span>Normal</span></button>
+      <button type="button" class="btn btn-outline-light justify-center" id="lastest"><em class="icon ni ni-arrow-down"></em><span>Lastest Posts</span></button>
+      <button type="button" class="btn btn-outline-light justify-center" id="most-like"><em class="icon ni ni-thumbs-up"></em><em class="icon ni ni-thumbs-down"></em><span>Most Like Posts</span></button>
     </div>
 </div>
 
@@ -131,8 +136,8 @@
                                                 <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@item.DisLike</span>
                                             </button>
                                         }
-                                        <button class="btn btn-info">
-                                            @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
+                                        <button class="btn btn-light"><em class="icon ni ni-comments"></em>
+                                            <span>@Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })</span>
                                         </button>
                                     </div>
                                     <div class="col-1"></div>
@@ -143,6 +148,10 @@
 
                     </div>
                 }
+                <div class="ml-2">
+                    @Html.Partial("PagingPartial")
+                </div>
+                
 
 
                 <form method="post" asp-action="AddPost" asp-controller="User">
@@ -232,12 +241,12 @@
                                         Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
                                     </div>
                                     <input type="checkbox" name="accept" id="accept"/>
-                                    <label for="accept">Accept terms</label>
+                                    <label for="accept">Terms</label>
                                 </div>
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-success" id="btn-accept" disabled>Accept</button>
+                                    <button type="submit" class="btn btn-success" id="btn-accept" disabled>Continue</button>
                                 </div>
 
 
@@ -260,6 +269,52 @@
         });
 
         $(document).ready(function() {
+            var params = GetQueryParams()
+            var filter = parseInt(params.filter1)
+            
+            switch(filter){
+                case 1:
+                    $("#lastest").addClass("active")
+                    break;
+                case 2:
+                    $("#most-like").addClass("active")
+                    break;
+                default:
+                    $("#normal").addClass("active")
+                    break;
+            }
+
+            $('#normal').click(function(){
+                params['filter1'] = "0"
+                url = window.location.href.split('?')[0] + '?'
+
+                Object.keys(params).map(key => {
+                    url += `${key}=${params[key]}&`
+                })
+                url = url.substr(0, url.length - 1)
+                window.location.href = url
+            })
+            $('#lastest').click(function(){
+                params['filter1'] = "1"
+                url = window.location.href.split('?')[0] + '?'
+
+                Object.keys(params).map(key => {
+                    url += `${key}=${params[key]}&`
+                })
+                url = url.substr(0, url.length - 1)
+                window.location.href = url
+            })
+            $('#most-like').click(function(){
+                params['filter1'] = "2"
+                url = window.location.href.split('?')[0] + '?'
+
+                Object.keys(params).map(key => {
+                    url += `${key}=${params[key]}&`
+                })
+                url = url.substr(0, url.length - 1)
+                window.location.href = url
+            })
+
             $('#accept').click(function(){
                 var check = $('#accept').is(":checked")
                 if(check){
@@ -357,5 +412,15 @@
                 })
             })
         })
+
+        function GetQueryParams(){
+            var urlSearchParams = new URLSearchParams(window.location.search)
+            var params = []
+
+            Object.entries(Object.fromEntries(urlSearchParams.entries())).map(([key, value]) => {
+                params[key.toLowerCase()] = value
+            })
+            return params
+        }
     </script>
 }

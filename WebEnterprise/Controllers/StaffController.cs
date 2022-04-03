@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using WebEnterprise.Models.DTO;
 
 namespace WebEnterprise.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class StaffController : Controller
     {
         private readonly UserManager<CustomUser> userManager;
