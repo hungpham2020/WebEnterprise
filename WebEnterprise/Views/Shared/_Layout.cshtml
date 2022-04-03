@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/dashlite.css?ver=2.9.1">
     <link id="skin-default" rel="stylesheet" href="~/assets/css/theme.css?ver=2.9.1">
-
     <link rel="stylesheet" href="~/assets/css/libs/fontawesome-icons.css" />
 
     @RenderSection("css", required:false)
@@ -30,12 +29,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">View Posts</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
 
                         @if (User.IsInRole("Admin") || User.IsInRole("Assurance") || User.IsInRole("Coordinator") || User.IsInRole("Staff"))
                         {
+                            if (User.IsInRole("Assurance"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                </li>   
+                            }
                             
                             <li class="nav-item">
 
@@ -46,7 +48,7 @@
                                                
                                                 @foreach(Notification a in ViewBag.Not)
                                                 {
-                                                     <span><a href="#">@a.description at @a.date</a></span>
+                                                     <span><a>@a.description at @a.date</a></span>
                                                      <div class="dropdown-divider"></div>
                                                 }
 
@@ -64,6 +66,7 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">View Statistics</a>
                                 </li>
                             }
+                            
                         }
                     </ul>
                     <partial name="_LoginPartial" />

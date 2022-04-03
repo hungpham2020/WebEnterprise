@@ -380,7 +380,11 @@ namespace WebEnterprise.Controllers
                 return Json(userPost);
             }
         }
-
+        public IActionResult AssuranceIndex()
+        {
+            Notifiation();
+            return View();
+        }
         private void Notifiation()
         {
             var notes = (from n in context.Notifications

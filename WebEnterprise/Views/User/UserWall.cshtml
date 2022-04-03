@@ -67,63 +67,45 @@
 
                     <div id="Placeholder"></div>
 
-                        @*-----------Like and comment-------------*@
-                        <div>
-                            <div class="btn-parent row text-center">
-                                <div class="col-2 ml-2">
-                                    <div class="row">
-                                        <div class="col">Like: @item.Like</div>
-                                        <div class="col">DisLike: @item.DisLike</div>
+                          @*-----------Like and comment-------------*@
+                            <div>
+                                <div class="btn-parent row text-center">
+                                    <div class="col-12 text-center">
+                                        <input hidden value="@item.Id" class="post-id" />
+                                        @if(item.Status == null)
+                                        {
+                                            <button type="button" class="btn btn-light btn-like" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@item.Like</span>
+                                            </button>
+                                            <button type="button" class="btn btn-light btn-dislike" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@item.DisLike</span>
+                                            </button>
+                                        }
+                                        @if (item.Status == true)
+                                        {
+                                            <button type="button" class="btn btn-success btn-like" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@item.Like</span>
+                                            </button>
+                                            <button type="button" class="btn btn-light btn-dislike" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@item.DisLike</span>
+                                            </button>
+                                        }
+                                        @if(item.Status == false)
+                                        {
+                                            <button type="button" class="btn btn-light btn-like" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                            <i class="fas fa-thumbs-up mr-1" aria-hidden="true"></i> <span>@item.Like</span>
+                                            </button>
+                                            <button type="button" class="btn btn-success btn-dislike" data-status=@(item.Status == true ? "true": item.Status == false ? "false": null)>
+                                                <i class="fas fa-thumbs-down mr-1" aria-hidden="true"></i> <span>@item.DisLike</span>
+                                            </button>
+                                        }
+                                        <button class="btn btn-info">
+                                            @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
+                                        </button>
                                     </div>
+                                    <div class="col-1"></div>
                                 </div>
-                                <div class="col-8 text-center">
-                                    <input hidden value="@item.Id" class="post-id" />
-                                    @if (item.Status == true)
-                                    {
-                                        <button type="button" class="btn btn-primary" disabled>
-                                            Liked
-                                        </button>
-                                    }
-                                    else if (item.Status == false)
-                                    {
-                                        <button type="button" class="btn btn-primary" disabled>
-                                            DisLiked
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" class="btn btn-primary btn-like">
-                                            Like
-                                        </button>
-                                        <button type="button" class="btn btn-primary btn-dislike">
-                                            DisLike
-                                        </button>
-                                    }
-                                    <button class="btn btn-info">
-                                        @Html.ActionLink("Comment", "ShowComment" ,new { id = item.Id })
-                                    </button>
-                                </div>
-                                <div class="col-1">
-                                    <div class="nk-tb-col nk-tb-col-tools">
-                                        <ul class="nk-tb-actions gx-1 my-n1">
-                                            <li class="mr-n1">
-                                                <div class="dropdown">
-                                                    <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <ul class="link-list-opt no-bdr">
-                                                            <li><span>@Html.ActionLink("Edit", "EditPost", new { id = item.Id })</span></li>
-                                                            <li><span>@Html.ActionLink("Delete", "DeletePost", new { id = item.Id }, new {onClick = "return confirm('Are you sure?')"})</span></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-
                             </div>
-                        </div>
 
                     </div><!-- .col -->
 
@@ -138,23 +120,27 @@
 
 
 @section Scripts{
-<script type="text/javascript">
-    $(function() {
-      $( "i" ).click(function() {
-        $( "i,span" ).toggleClass( "press", 1000 );
-      });
-    });
+    <script type="text/javascript">
+        $(function() {
+            $("i" ).click(function() {
+                $( "i,span" ).toggleClass( "press", 1000 );
+            });
+        });
 
-    $(document).ready(function() {
-        $('.btn-like').click(function(){
+        $(document).ready(function() {
+            $('.btn-like').click(function(){
                 var parent = $(this).parents('.btn-parent')
                 var postId = parent.find('.post-id').val()
                 var userId = "@userid"
                 var thisEl = $(this)
+                var status = $(this).data("status")
+
                 var data = {
                     "postId": postId,
                     "userId": userId,
+                    "status": status === true ? null: true
                 }
+                
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("Like", "User")',
@@ -164,36 +150,71 @@
                     contentType: "application/json; charset=utf-8",
                     processData: false,
                     success: function(res){
-                        thisEl.text("Liked")
-                        thisEl.attr('disabled', true)
-                        parent.find('.btn-dislike').hide()
+                        var oldNumber = parseInt(thisEl.find("span").text());
+                        if (res.status) {
+                            thisEl.find("span").text(oldNumber + 1)
+                            thisEl.removeClass().addClass("btn btn-success btn-like")
+                            thisEl.parent().find(".btn-dislike").removeClass().addClass("btn btn-light btn-dislike")
+                        }
+                        else
+                        {
+                            thisEl.find("span").text(oldNumber - 1)
+                            thisEl.removeClass().addClass("btn btn-light btn-like")
+                            thisEl.parent().find(".btn-dislike").removeClass().addClass("btn btn-light btn-dislike")
+                        }
+                        if (status === false) {
+                            var oldDisNumber = parseInt(thisEl.parent().find(".btn-dislike").find("span").text());
+                            thisEl.parent().find(".btn-dislike").find("span").text(oldDisNumber - 1)
+                        }
+                        thisEl.data("status", res.status)
+                        thisEl.parent().find(".btn-dislike").data("status", res.status)
                     }
                 })
             })
-        $('.btn-dislike').click(function(){
-            var parent = $(this).parents('.btn-parent')
-            var postId = parent.find('.post-id').val()
-            var userId = "@userid"
-            var thisEl = $(this)
-            var data = {
-                "postId": postId,
-                "userId": userId,
-            }
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("DisLike", "User")',
-                data: req = JSON.stringify(data),
-                cache: false,
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                processData: false,
-                success: function(res){
-                    thisEl.text("DisLiked")
-                    thisEl.attr('disabled', true)
-                    parent.find('.btn-like').hide()
+            $('.btn-dislike').click(function(){
+                var parent = $(this).parents('.btn-parent')
+                var postId = parent.find('.post-id').val()
+                var userId = "@userid"
+                var thisEl = $(this)
+                var status = $(this).data("status")
+                console.log(status);
+                var data = {
+                    "postId": postId,
+                    "userId": userId,
+                    "status": status === false ? null: false
                 }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("DisLike", "User")',
+                    data: req = JSON.stringify(data),
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function(res){
+                        var oldNumber = parseInt(thisEl.find("span").text());
+                        if (res.status === false) {
+                            thisEl.find("span").text(oldNumber + 1)
+                            thisEl.removeClass().addClass("btn btn-success btn-dislike")
+                            thisEl.parent().find(".btn-like").removeClass().addClass("btn btn-light btn-like")
+                        }
+                        else
+                        {
+                            thisEl.find("span").text(oldNumber - 1)
+                            thisEl.parent().find(".btn-like").removeClass().addClass("btn btn-light btn-like")
+                            thisEl.removeClass().addClass("btn btn-light btn-dislike")
+                        }
+                        if (status === true) {
+                            var oldLikeNumber = parseInt(thisEl.parent().find(".btn-like").find("span").text());
+                            console.log(oldLikeNumber)
+                            thisEl.parent().find(".btn-like").find("span").text(oldLikeNumber - 1)
+                        }
+                        thisEl.data("status", res.status)
+                        thisEl.parent().find(".btn-like").data("status", res.status)
+                    }
+                })
             })
         })
-    })
-</script>
+    </script>
 }
