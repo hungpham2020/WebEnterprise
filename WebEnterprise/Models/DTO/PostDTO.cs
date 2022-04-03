@@ -8,7 +8,7 @@ namespace WebEnterprise.Models.DTO
         public int Id { get; set; }
 
         [Required]
-        [StringLength(maximumLength:20, MinimumLength =10, ErrorMessage = "Title must have 10 to 20 digits")]
+        [StringLength(maximumLength:2, MinimumLength =5, ErrorMessage = "Title must have 10 to 20 digits")]
         public string Title { get; set; }
 
         [Required]
@@ -18,10 +18,7 @@ namespace WebEnterprise.Models.DTO
         public DateTime? OpenDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
-        [Date]
         public DateTime? ClosedDate { get; set; }
-
-        [Required]
         public int? CatId { get; set; }
 
         public string? CatName { get; set; }
