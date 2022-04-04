@@ -92,28 +92,28 @@ namespace WebEnterprise.Controllers
             var depart = LoadDepartment(f["DepartmentIds"]);
             if(depart != null)
             {
-                if (ModelState.IsValid)
+               if (ModelState.IsValid)
                 {
-                    var account = new CustomUser
-                    {
-                        UserName = userName,
-                        FullName = fullName,
-                        Email = email,
-                    };
-                    foreach (var d in depart)
-                    {
-                        account.DepartmentId = d.Id;
-                    }
-                    var result = await userManager.CreateAsync(account, "Abc@12345");
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(account, "Assurance");
-                        TempData["message"] = $"Successfully Add new Assurance {account.FullName}";
-                        return RedirectToAction("Index");
-                    }
+                        var account = new CustomUser
+                        {
+                            UserName = userName,
+                            FullName = fullName,
+                            Email = email,
+                        };
+                        foreach (var d in depart)
+                        {
+                            account.DepartmentId = d.Id;
+                        }
+                        var result = await userManager.CreateAsync(account, "Abc@12345");
+                        if (result.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(account, "Assurance");
+                            TempData["message"] = $"Successfully Add new Assurance {account.FullName}";
+                            return RedirectToAction("Index");
+                        }
                 }
             }
-            TempData["message"] = $"Cannot Add Assurance";
+            TempData["message"] = $"Cannot Add Assurance, account is not suitable!";
             return RedirectToAction("Index");
         }
 
@@ -181,6 +181,18 @@ namespace WebEnterprise.Controllers
                          }).ToList();
             notes.OrderByDescending(c => c.date).Take(5).ToList();
             ViewBag.Not = notes;
+        }
+
+        private void validation1(CustomUser s)
+        {
+            if (!string.IsNullOrEmpty(s.UserName) && s.UserName.Length < 6)
+            {
+                ModelState.AddModelError("Name", "Staff's name must be more than 5 characters");
+            }
+            else if (!string.IsNullOrEmpty(s.UserName) && s.UserName.Length < 7)
+            {
+                ModelState.AddModelError("Name", "User name must be more than 6");
+            }
         }
 
     }
