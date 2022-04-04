@@ -246,7 +246,7 @@ namespace WebEnterprise.Controllers
 
                        if(user != null && post.Title != null)
                         {
-                            note.description = $"{user.FullName} add new post {post.Title}";
+                            note.description = $"{user.UserName} add new post {post.Title}";
                             note.date = DateTime.Now;
                             note.UserId = post.UserId;
 
@@ -319,6 +319,7 @@ namespace WebEnterprise.Controllers
             var post = context.Posts.FirstOrDefault(p => p.Id == id);
             var user = context.Users.FirstOrDefault(u => u.Id == post.UserId);
             var note = context.Notifications.FirstOrDefault(p => p.description.Contains($"{user.UserName} add new post {post.Title}"));
+
             if (post.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
                 context.Remove(post);
@@ -330,6 +331,10 @@ namespace WebEnterprise.Controllers
             TempData["message"] = $"Can not delete post {post.Title}, cause you are not owner!";
             return RedirectToAction("UserWall");
         }
+
+
+
+
 
         [HttpPost]
         public IActionResult Like([FromBody] UserLikePost req)
