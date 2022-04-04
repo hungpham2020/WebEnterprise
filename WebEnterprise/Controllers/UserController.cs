@@ -254,7 +254,7 @@ namespace WebEnterprise.Controllers
                             context.Notifications.Add(note);
                             context.SaveChanges();
 
-                            TempData["message"] = $"Successfully Add new Post {post.Title}";
+                            TempData["message"] = $"Successfully Add new Post {post.Title}" ;
                             return RedirectToAction("Index");
                          }
                     }
