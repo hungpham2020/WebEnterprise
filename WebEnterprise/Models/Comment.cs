@@ -6,6 +6,7 @@ namespace WebEnterprise.Models
     {
         public int Id { get; set; }
 
+
         public string? Description { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]

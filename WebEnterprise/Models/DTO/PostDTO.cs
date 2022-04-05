@@ -8,7 +8,7 @@ namespace WebEnterprise.Models.DTO
         public int Id { get; set; }
 
         [Required]
-        [StringLength(maximumLength:20, MinimumLength =5, ErrorMessage = "Title must have 10 to 20 digits")]
+        [StringLength(maximumLength:100, MinimumLength =5, ErrorMessage = "Title must have 5 to 100 digits")]
         public string Title { get; set; }
 
         [Required]

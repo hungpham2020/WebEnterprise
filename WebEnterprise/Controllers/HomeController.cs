@@ -32,11 +32,23 @@ namespace WebEnterprise.Controllers
             ViewBag.Not = notes;
             return View();
         }
-
+        private void Notifiation()
+        {
+            var notes = (from n in context.Notifications
+                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         select new Notification
+                         {
+                             description = n.description,
+                             date = n.date
+                         }).ToList();
+            notes.OrderByDescending(c => c.date).Take(5).ToList();
+            ViewBag.Not = notes;
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            Notifiation();
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
