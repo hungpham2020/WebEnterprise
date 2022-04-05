@@ -55,8 +55,10 @@
                                             {
                                                 foreach (Notification a in ViewBag.Not)
                                                 {
-                                                     <span><a>@a.description at @a.date</a></span>
-                                                     <div class="dropdown-divider"></div>
+                                                     <div>
+                                                         <a><span>@a.description at @a.date</span></a>
+                                                        <div class="dropdown-divider"></div>
+                                                     </div>
                                                 }
                                             }
 
