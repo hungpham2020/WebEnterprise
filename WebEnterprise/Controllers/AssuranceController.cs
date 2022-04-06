@@ -8,19 +8,19 @@ using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.Common;
 using WebEnterprise.Models.DTO;
+using WebEnterprise.Repository.Interfaces;
 
 namespace WebEnterprise.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AssuranceController : Controller
     {
-        private readonly UserManager<CustomUser> userManager;
         private readonly ApplicationDbContext context;
-
-        public AssuranceController(UserManager<CustomUser> _userManager, ApplicationDbContext _context)
+        private readonly IAssuranceRepo assuranceRepo;
+        public AssuranceController(IAssuranceRepo _assuranceRepo, ApplicationDbContext _context)
         {
-            userManager = _userManager;
             context = _context;
+            assuranceRepo = _assuranceRepo;
         }
 
         private List<Department> LoadDepartment(string form)
@@ -59,17 +59,7 @@ namespace WebEnterprise.Controllers
             pageSize = pageSize ?? 10;
             keyword = keyword ?? "";
 
-            var assurances = from u in context.Users
-                             join ur in context.UserRoles on u.Id equals ur.UserId
-                             join r in context.Roles on ur.RoleId equals r.Id
-                             where r.Name == "Assurance"
-                             select new UserDTO
-                             {
-                                 Id = u.Id,
-                                 FullName = u.FullName,
-                                 UserName = u.UserName,
-                                 Email = u.Email
-                             };
+            var assurances = assuranceRepo.GetAllAssurances();
 
             if (!String.IsNullOrEmpty(keyword))
             {
@@ -96,23 +86,12 @@ namespace WebEnterprise.Controllers
             {
                if (ModelState.IsValid)
                 {
-                        var account = new CustomUser
-                        {
-                            UserName = userName,
-                            FullName = fullName,
-                            Email = email,
-                        };
-                        foreach (var d in depart)
-                        {
-                            account.DepartmentId = d.Id;
-                        }
-                        var result = await userManager.CreateAsync(account, "Abc@12345");
-                        if (result.Succeeded)
-                        {
-                            await userManager.AddToRoleAsync(account, "Assurance");
-                            TempData["message"] = $"Successfully Add new Assurance {account.FullName}";
-                            return RedirectToAction("Index");
-                        }
+                    var account = await assuranceRepo.AddAssurance(userName, fullName, email, depart);
+                    if(account.Id != null)
+                    {
+                        TempData["message"] = $"Successfully Add new Assurance {account.FullName}";
+                        return RedirectToAction("Index");
+                    }
                 }
             }
             TempData["message"] = $"Cannot Add Assurance, account is not suitable!";
@@ -121,13 +100,7 @@ namespace WebEnterprise.Controllers
 
         public IActionResult EditAssurance(string id)
         {
-            var assurance = context.Users.Where(u => u.Id == id).Select(u => new UserDTO
-            {
-                Email = u.Email,
-                FullName = u.FullName,
-                PhoneNumber = u.PhoneNumber,
-                UserName = u.UserName
-            }).FirstOrDefault();
+            var assurance = assuranceRepo.GetEditAssurance(id);
             if (assurance == null)
             {
                 return RedirectToAction("Index");
@@ -143,14 +116,9 @@ namespace WebEnterprise.Controllers
 
             if (ModelState.IsValid)
             {
-                var assurance = context.Users.Find(res.Id);
+                var assurance = assuranceRepo.EditAssurance(res);
                 if(assurance != null)
                 {
-                    assurance.Email = res.Email;
-                    assurance.FullName = res.FullName;
-                    assurance.UserName = res.UserName;
-                    assurance.PhoneNumber = res.PhoneNumber;
-                    context.SaveChanges();
                     TempData["message"] = $"Successfully Edit Assurance {assurance.FullName}";
                 }
                 return RedirectToAction("Index");
@@ -161,13 +129,11 @@ namespace WebEnterprise.Controllers
 
         public IActionResult DeleteAssurance(string id)
         {
-            var assurance = context.Users.FirstOrDefault(s => s.Id == id);
-            if (assurance == null)
+            var assurance = assuranceRepo.DeleteAssurance(id);
+            if (!assurance)
             {
                 return RedirectToAction("Index");
-            }
-            context.Remove(assurance);
-            context.SaveChanges();
+            };
             TempData["message"] = $"Successfully Delete Assurance";
             return RedirectToAction("Index");
         }
@@ -184,18 +150,5 @@ namespace WebEnterprise.Controllers
             notes.OrderByDescending(c => c.date).Take(5).ToList();
             ViewBag.Not = notes;
         }
-
-        private void validation1(CustomUser s)
-        {
-            if (!string.IsNullOrEmpty(s.UserName) && s.UserName.Length < 6)
-            {
-                ModelState.AddModelError("Name", "Staff's name must be more than 5 characters");
-            }
-            else if (!string.IsNullOrEmpty(s.UserName) && s.UserName.Length < 7)
-            {
-                ModelState.AddModelError("Name", "User name must be more than 6");
-            }
-        }
-
     }
 }

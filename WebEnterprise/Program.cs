@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
+using WebEnterprise.Repository;
+using WebEnterprise.Repository.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,10 @@ builder.Services.AddDefaultIdentity<CustomUser>(options => options.SignIn.Requir
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IAssuranceRepo, AssuranceRepo>();
+builder.Services.AddScoped<ICoorRepo, CoorRepo>();
+builder.Services.AddScoped<IStaffRepo, StaffRepo>();
 
 var app = builder.Build();
 

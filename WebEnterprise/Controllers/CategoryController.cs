@@ -49,7 +49,6 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public IActionResult AddCat(string name, string description)
         {
-          
             if (ModelState.IsValid)
             {
                 var cate = new Category();

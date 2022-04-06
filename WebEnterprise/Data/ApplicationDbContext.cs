@@ -12,6 +12,13 @@ namespace WebEnterprise.Data
         {
 
         }
+
+        public ApplicationDbContext()
+            : base()
+        {
+
+        }
+
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -19,6 +26,19 @@ namespace WebEnterprise.Data
         public DbSet<UserLikePost> UserLikePosts { get; set; }
 
         public DbSet<Department> Departments { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                //IConfigurationRoot configuration = new ConfigurationBuilder()
+                //   .SetBasePath(Directory.GetCurrentDirectory())
+                //   .AddJsonFile("appsettings.json")
+                //   .Build();
+                //var connectionString = configuration.GetConnectionString("Default");
+                optionsBuilder.UseSqlServer("data source=DESKTOP-ST724GG\\SQLEXPRESS;initial catalog=WebEnterpriseMVC;persist security info=True;user id=sa;password=1234567;MultipleActiveResultSets=True;App=EntityFramework");
+            }
+        }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -8,18 +8,19 @@ using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.Common;
 using WebEnterprise.Models.DTO;
+using WebEnterprise.Repository.Interfaces;
 
 namespace WebEnterprise.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class StaffController : Controller
     {
-        private readonly UserManager<CustomUser> userManager;
+        private readonly IStaffRepo staffRepo;
         private readonly ApplicationDbContext context;
 
-        public StaffController(UserManager<CustomUser> _userManager, ApplicationDbContext _context)
+        public StaffController(IStaffRepo _staffRepo, ApplicationDbContext _context)
         {
-            userManager = _userManager;
+            staffRepo = _staffRepo;
             context = _context;
         }
 
@@ -47,23 +48,20 @@ namespace WebEnterprise.Controllers
             ViewBag.Departments = new SelectList(departments, "Id", "Name");
         }
 
+        private void SelectedDepart(string id)
+        {
+            var selected = context.Users.Where(x => x.Id == id).Select(x => x.DepartmentId).FirstOrDefault();
+            var departments = context.Departments.Select(x => x).ToList();
+            ViewBag.Departments = new SelectList(departments, "Id", "Name", selected);
+        }
+
         public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
         {
             pageIndex = pageIndex ?? 1;
             pageSize = pageSize ?? 10;
             keyword = keyword ?? "";
 
-            var staffs = from u in context.Users
-                        join ur in context.UserRoles on u.Id equals ur.UserId
-                        join r in context.Roles on ur.RoleId equals r.Id
-                        where r.Name == "Staff"
-                        select new UserDTO
-                        {
-                            Id = u.Id,
-                            FullName = u.FullName,
-                            UserName = u.UserName,
-                            Email = u.Email,
-                        };
+            var staffs = staffRepo.GetAllStaffs();
             if (!String.IsNullOrEmpty(keyword))
             {
                 staffs = staffs.Where(p => p.FullName.Contains(keyword));
@@ -90,20 +88,9 @@ namespace WebEnterprise.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var account = new CustomUser
+                    var account = await staffRepo.AddStaff(username, fullname, email, depart);
+                    if(account.Id != null)
                     {
-                        UserName = username,
-                        FullName = fullname,
-                        Email = email
-                    };
-                    foreach (var d in depart)
-                    {
-                        account.DepartmentId = d.Id;
-                    }
-                    var result = await userManager.CreateAsync(account, "Abc@12345");
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(account, "Staff");
                         TempData["message"] = $"Successfully Add new Staff {account.FullName}";
                         return RedirectToAction("Index");
                     }
@@ -115,53 +102,39 @@ namespace WebEnterprise.Controllers
 
         public IActionResult EditStaff(string id)
         {
-            var staff = context.Users.Where(u => u.Id == id).Select(u => new UserDTO
-            {
-                UserName=u.UserName,
-                FullName=u.FullName,
-                Email=u.Email,
-                PhoneNumber=u.PhoneNumber
-            }).FirstOrDefault();
+            var staff = staffRepo.GetEditStaff(id);
             if (staff == null)
             {
                 return RedirectToAction("Index");
             }
-            ViewDepart();
+            SelectedDepart(id);
             Notifiation();
             return View(staff);
         }
-
+        
         [HttpPost]
         public IActionResult EditStaff(UserDTO res)
         {
             if (ModelState.IsValid)
             {
-                var staff = context.Users.FirstOrDefault(context => context.Id == res.Id);
+                var staff = staffRepo.EditStaff(res);
+                if(staff != null)
                 {
-                    staff.Email = res.Email;
-                    staff.UserName = res.UserName;
-                    staff.FullName = res.FullName;
-                    staff.PhoneNumber = res.PhoneNumber;
-                    staff.DepartmentId = res.DepartId;
-
-                };
-                context.SaveChanges();
-                TempData["message"] = $"Successfully Edit Staff {staff.FullName}";
+                    TempData["message"] = $"Successfully Edit Staff {staff.FullName}";
+                }
                 return RedirectToAction("Index");
             }
-            ViewDepart();
+            SelectedDepart(res.Id);
             return View(res);
         }
 
         public IActionResult DeleteStaff(string id)
         {
-            var staff = context.Users.FirstOrDefault(s => s.Id == id);
-            if(staff == null)
+            var staff = staffRepo.DeleteStaff(id);
+            if(!staff)
             {
                 return RedirectToAction("Index");
             }
-            context.Remove(staff);
-            context.SaveChanges();
             TempData["message"] = $"Successfully Delete Staff";
             return RedirectToAction("Index");
         }
