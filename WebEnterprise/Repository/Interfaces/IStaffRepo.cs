@@ -7,7 +7,7 @@ namespace WebEnterprise.Repository.Interfaces
     {
         public IQueryable<UserDTO> GetAllStaffs();
 
-        public Task<CustomUser> AddStaff(string userName, string fullName, string email, List<Department> departs);
+        public Task<CustomUser> AddStaff(UserAddDTO user);
 
         public UserDTO GetEditStaff(string id);
 

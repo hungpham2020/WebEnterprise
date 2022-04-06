@@ -7,7 +7,7 @@ namespace WebEnterprise.Repository.Interfaces
     {
         public IQueryable<UserDTO> GetAllCoor();
 
-        public Task<CustomUser> AddCoor(string userName, string fullName, string email, List<Department> departs);
+        public Task<CustomUser> AddCoor(UserAddDTO user);
 
         public UserDTO GetEditCoor(string id);
 

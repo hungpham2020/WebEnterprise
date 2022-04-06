@@ -16,18 +16,15 @@ namespace WebEnterprise.Repository
             userManager = _userManager;
             context = _context;
         }
-        public async Task<CustomUser> AddStaff(string userName, string fullName, string email, List<Department> departs)
+        public async Task<CustomUser> AddStaff(UserAddDTO user)
         {
             var account = new CustomUser
             {
-                UserName = userName,
-                FullName = fullName,
-                Email = email,
+                UserName = user.UserName,
+                FullName = user.FullName,
+                Email = user.Email,
+                DepartmentId =user.DepartId
             };
-            foreach (var d in departs)
-            {
-                account.DepartmentId = d.Id;
-            }
             if (account.UserName == null || account.FullName == null || account.Email == null || account.DepartmentId == null)
             {
                 return null;

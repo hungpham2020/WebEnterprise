@@ -7,7 +7,7 @@ namespace WebEnterprise.Repository.Interfaces
     {
         public IQueryable<UserDTO> GetAllAssurances();
 
-        public Task<CustomUser> AddAssurance(string userName, string fullName, string email, List<Department> departs);
+        public Task<CustomUser> AddAssurance(UserAddDTO user);
 
         public UserDTO GetEditAssurance(string id);
 

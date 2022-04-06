@@ -82,14 +82,18 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCoordinator(string fullname, string username, string email, IFormCollection f)
+        public async Task<IActionResult> AddCoordinator(UserAddDTO user, IFormCollection f)
         {
             var depart = LoadDepartment(f["DepartmentIds"]);
-            if(depart != null)
+            foreach (var d in depart)
+            {
+                user.DepartId = d.Id;
+            }
+            if (depart != null)
             {
                 if (ModelState.IsValid)
                 {
-                    var account = await coorRepo.AddCoor(username, fullname, email, depart);
+                    var account = await coorRepo.AddCoor(user);
                     if (account.Id != null)
                     {
                         TempData["message"] = $"Successfully Add new Coordinator {account.FullName}";
@@ -97,6 +101,7 @@ namespace WebEnterprise.Controllers
                     }
                 }
             }
+            //}
             TempData["message"] = $"Cannot Add Coordinator";
             return RedirectToAction("Index");
         }

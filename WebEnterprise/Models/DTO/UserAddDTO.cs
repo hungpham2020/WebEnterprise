@@ -2,7 +2,7 @@
 
 namespace WebEnterprise.Models.DTO
 {
-    public class UserDTO
+    public class UserAddDTO
     {
         public string? Id { get; set; }
 
@@ -18,12 +18,8 @@ namespace WebEnterprise.Models.DTO
         [EmailAddress]
         public string? Email { get; set; }
 
-        [Required]
-        public string? PhoneNumber { get; set; }
-
         public string? DepartmentName { get; set; }
 
-        [Required]
         public int? DepartId { get; set; }
     }
 }

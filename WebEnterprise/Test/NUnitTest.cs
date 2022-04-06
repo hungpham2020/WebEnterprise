@@ -14,6 +14,7 @@ namespace WebEnterprise.Test
     {
         private static AssuranceRepo AssuranRepo;
         private static StaffRepo staffRepo;
+        private static CoorRepo coorRepo;
         private static Mock<UserManager<CustomUser>> userManager;
         private static ApplicationDbContext context;
 
@@ -38,11 +39,14 @@ namespace WebEnterprise.Test
                 .ReturnsAsync(true);
             userManager.Setup(userManager => userManager.IsInRoleAsync(It.IsAny<CustomUser>(), "Staff"))
                 .ReturnsAsync(true);
+            userManager.Setup(userManager => userManager.IsInRoleAsync(It.IsAny<CustomUser>(), "Coordinator"))
+                .ReturnsAsync(true);
             userManager.Setup(userManager => userManager.CreateAsync(It.IsAny<CustomUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
 
             AssuranRepo = new AssuranceRepo(userManager.Object, context);
             staffRepo = new StaffRepo(userManager.Object, context);
+            coorRepo = new CoorRepo(userManager.Object, context);
         }
 
         #region ArrsuranceTest
@@ -59,16 +63,15 @@ namespace WebEnterprise.Test
         public async Task TestAddAssurance()
         {
             // var assuranceRepo = new Mock<IAssuranceRepo>();
-            var account = new CustomUser
+            var account = new UserAddDTO
             {
                 UserName = "TestCase1",
                 FullName = "Test Case 1",
-                Email = "testcase1@gmail.com"
+                Email = "testcase1@gmail.com",
+                DepartId = 1
             };
 
-            var deparments = new List<Department>() { new Department() { Id = 1 } };
-
-            var result = await AssuranRepo.AddAssurance(account.UserName, account.FullName, account.Email, deparments);
+            var result = await AssuranRepo.AddAssurance(account);
 
             Assert.IsTrue(result != null);
         }
@@ -76,16 +79,13 @@ namespace WebEnterprise.Test
         [Test]
         public async Task TestAddAssuranceFail()
         {
-            // var assuranceRepo = new Mock<IAssuranceRepo>();
-            var account = new CustomUser
+            var account = new UserAddDTO
             {
                 UserName = "TestCase1",
                 FullName = "Test Case 1",
             };
 
-            var deparments = new List<Department>() { new Department() { Id = 1 } };
-
-            var result = await AssuranRepo.AddAssurance(account.UserName, account.FullName, account.Email, deparments);
+            var result = await AssuranRepo.AddAssurance(account);
 
             Assert.IsFalse(result != null);
         }
@@ -173,16 +173,15 @@ namespace WebEnterprise.Test
         [Test]
         public async Task TestAddStaff()
         {
-            var account = new CustomUser
+            var account = new UserAddDTO
             {
                 UserName = "TestCase2",
                 FullName = "Test Case 2",
-                Email = "testcase1@gmail.com"
+                Email = "testcase1@gmail.com",
+                DepartId = 1
             };
 
-            var deparments = new List<Department>() { new Department() { Id = 1 } };
-
-            var result = await staffRepo.AddStaff(account.UserName, account.FullName, account.Email, deparments);
+            var result = await staffRepo.AddStaff(account);
 
             Assert.IsTrue(result != null);
         }
@@ -190,15 +189,14 @@ namespace WebEnterprise.Test
         [Test]
         public async Task TestAddStaffFail()
         {
-            var account = new CustomUser
+            var account = new UserAddDTO
             {
                 UserName = "TestCase2",
                 FullName = "Test Case 2",
+                DepartId = 1
             };
 
-            var deparments = new List<Department>() { new Department() { Id = 1 } };
-
-            var result = await staffRepo.AddStaff(account.UserName, account.FullName, account.Email, deparments);
+            var result = await staffRepo.AddStaff(account);
 
             Assert.IsFalse(result != null);
         }
@@ -273,118 +271,117 @@ namespace WebEnterprise.Test
 
         #endregion
 
-        //#region CoordinatorTest
+        #region CoordinatorTest
 
-        //[Test]
-        //public void GetAllCoorTest()
-        //{
-        //    var result = staffRepo.GetAllStaffs();
+        [Test]
+        public void GetAllCoorTest()
+        {
+            var result = coorRepo.GetAllCoor();
 
-        //    Assert.IsTrue(result != null);
-        //}
+            Assert.IsTrue(result != null);
+        }
 
-        //[Test]
-        //public async Task TestAddCoor()
-        //{
-        //    var account = new CustomUser
-        //    {
-        //        UserName = "TestCase2",
-        //        FullName = "Test Case 2",
-        //        Email = "testcase1@gmail.com"
-        //    };
+        [Test]
+        public async Task TestAddCoor()
+        {
+            var account = new UserAddDTO
+            {
+                UserName = "TestCase2",
+                FullName = "Test Case 2",
+                Email = "testcase1@gmail.com",
+                DepartId = 1
+            };
 
-        //    var deparments = new List<Department>() { new Department() { Id = 1 } };
+            var result = await coorRepo.AddCoor(account);
 
-        //    var result = await staffRepo.AddStaff(account.UserName, account.FullName, account.Email, deparments);
+            Assert.IsTrue(result != null);
+        }
 
-        //    Assert.IsTrue(result != null);
-        //}
+        [Test]
+        public async Task TestAddCoorFail()
+        {
+            var account = new UserAddDTO
+            {
+                UserName = "TestCase2",
+                FullName = "Test Case 2",
+            };
 
-        //[Test]
-        //public async Task TestAddCoorFail()
-        //{
-        //    var account = new CustomUser
-        //    {
-        //        UserName = "TestCase2",
-        //        FullName = "Test Case 2",
-        //    };
+            var deparments = new List<Department>() { new Department() { Id = 1 } };
 
-        //    var deparments = new List<Department>() { new Department() { Id = 1 } };
+            var result = await coorRepo.AddCoor(account);
 
-        //    var result = await staffRepo.AddStaff(account.UserName, account.FullName, account.Email, deparments);
+            Assert.IsFalse(result != null);
+        }
 
-        //    Assert.IsFalse(result != null);
-        //}
+        [Test]
+        public void TestEditCoor()
+        {
+            var result = new CustomUser();
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var user = new UserDTO
+                {
+                    Id = "60395add-292d-4224-8d54-f9376bba5e66",
+                    UserName = "Student6",
+                    FullName = "Student 7",
+                    Email = "student6@gmail.com",
+                    DepartId = 1,
+                };
+                result = coorRepo.EditCoor(user);
 
-        //[Test]
-        //public void TestEditCoor()
-        //{
-        //    var result = new CustomUser();
-        //    using (var trans = context.Database.BeginTransaction())
-        //    {
-        //        var user = new UserDTO
-        //        {
-        //            Id = "60395add-292d-4224-8d54-f9376bba5e66",
-        //            UserName = "Student6",
-        //            FullName = "Student 7",
-        //            Email = "student6@gmail.com",
-        //            DepartId = 1,
-        //        };
-        //        result = staffRepo.EditStaff(user);
+                trans.Rollback();
+            }
 
-        //        trans.Rollback();
-        //    }
+            Assert.IsTrue(result != null);
+        }
 
-        //    Assert.IsTrue(result != null);
-        //}
+        [Test]
+        public void TestEditCoorFail()
+        {
+            var user = new UserDTO
+            {
+                Id = "1234",
+                UserName = "Student6",
+                FullName = "Student 7",
+                Email = "student6@gmail.com",
+                DepartId = 1,
+            };
+            var result = coorRepo.EditCoor(user);
 
-        //[Test]
-        //public void TestEditCoorFail()
-        //{
-        //    var user = new UserDTO
-        //    {
-        //        Id = "1234",
-        //        UserName = "Student6",
-        //        FullName = "Student 7",
-        //        Email = "student6@gmail.com",
-        //        DepartId = 1,
-        //    };
-        //    var result = staffRepo.EditStaff(user);
+            Assert.IsFalse(result != null);
+        }
 
-        //    Assert.IsFalse(result != null);
-        //}
+        [Test]
+        public void TestDeleteCoor()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                string id = "60395add-292d-4224-8d54-f9376bba5e66";
+                result = coorRepo.DeleteCoor(id);
 
-        //[Test]
-        //public void TestDeleteCoor()
-        //{
-        //    bool result;
-        //    using (var trans = context.Database.BeginTransaction())
-        //    {
-        //        string id = "60395add-292d-4224-8d54-f9376bba5e66";
-        //        result = staffRepo.DeleteStaff(id);
+                trans.Rollback();
+            }
 
-        //        trans.Rollback();
-        //    }
+            Assert.IsTrue(result);
+        }
 
-        //    Assert.IsTrue(result);
-        //}
+        [Test]
+        public void TestDeleteCoorFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                string id = "1234";
+                result = coorRepo.DeleteCoor(id);
 
-        //[Test]
-        //public void TestDeleteCoorFail()
-        //{
-        //    bool result;
-        //    using (var trans = context.Database.BeginTransaction())
-        //    {
-        //        string id = "1234";
-        //        result = staffRepo.DeleteStaff(id);
+                trans.Rollback();
+            }
 
-        //        trans.Rollback();
-        //    }
+            Assert.IsFalse(result);
+        }
 
-        //    Assert.IsFalse(result);
-        //}
-
-        //#endregion
+        #endregion
 
         #region PostTest
         #endregion

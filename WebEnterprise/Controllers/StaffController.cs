@@ -81,15 +81,19 @@ namespace WebEnterprise.Controllers
 
         
         [HttpPost]
-        public async Task<IActionResult> AddStaff(string fullname, string username, string email, IFormCollection f)
+        public async Task<IActionResult> AddStaff(UserAddDTO user, IFormCollection f)
         {
             var depart = LoadDepartment(f["DepartmentIds"]);
-            if(depart != null)
+            foreach (var d in depart)
+            {
+                user.DepartId = d.Id;
+            }
+            if (depart != null)
             {
                 if (ModelState.IsValid)
                 {
-                    var account = await staffRepo.AddStaff(username, fullname, email, depart);
-                    if(account.Id != null)
+                    var account = await staffRepo.AddStaff(user);
+                    if (account.Id != null)
                     {
                         TempData["message"] = $"Successfully Add new Staff {account.FullName}";
                         return RedirectToAction("Index");

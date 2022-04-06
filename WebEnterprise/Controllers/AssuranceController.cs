@@ -79,15 +79,19 @@ namespace WebEnterprise.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult>AddAssurance(string userName, string fullName, string email, IFormCollection f)
+        public async Task<IActionResult>AddAssurance(UserAddDTO user, IFormCollection f)
         {
             var depart = LoadDepartment(f["DepartmentIds"]);
-            if(depart != null)
+            foreach (var d in depart)
             {
-               if (ModelState.IsValid)
+                user.DepartId = d.Id;
+            }
+            if (depart != null)
+            {
+                if (ModelState.IsValid)
                 {
-                    var account = await assuranceRepo.AddAssurance(userName, fullName, email, depart);
-                    if(account.Id != null)
+                    var account = await assuranceRepo.AddAssurance(user);
+                    if (account.Id != null)
                     {
                         TempData["message"] = $"Successfully Add new Assurance {account.FullName}";
                         return RedirectToAction("Index");
