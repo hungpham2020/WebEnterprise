@@ -5,6 +5,9 @@ namespace WebEnterprise.Models.DTO
     public class CommentDTO
     {
         public int? CommentId { get; set; }
+
+        public string? AuthorId { get; set; }
+
         public string? AuthorName { get; set; }
 
         public int? PostId { get; set; }

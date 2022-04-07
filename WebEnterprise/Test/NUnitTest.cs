@@ -15,6 +15,10 @@ namespace WebEnterprise.Test
         private static AssuranceRepo AssuranRepo;
         private static StaffRepo staffRepo;
         private static CoorRepo coorRepo;
+        private static CatRepo catRepo;
+        private static DepartmentRepo departmentRepo;
+        private static PostRepo postRepo;
+        private static UserRepo userRepo;
         private static Mock<UserManager<CustomUser>> userManager;
         private static ApplicationDbContext context;
 
@@ -47,6 +51,10 @@ namespace WebEnterprise.Test
             AssuranRepo = new AssuranceRepo(userManager.Object, context);
             staffRepo = new StaffRepo(userManager.Object, context);
             coorRepo = new CoorRepo(userManager.Object, context);
+            catRepo = new CatRepo(context);
+            departmentRepo = new DepartmentRepo(context);
+            postRepo = new PostRepo(context);
+            userRepo = new UserRepo(context);
         }
 
         #region ArrsuranceTest
@@ -62,7 +70,6 @@ namespace WebEnterprise.Test
         [Test]
         public async Task TestAddAssurance()
         {
-            // var assuranceRepo = new Mock<IAssuranceRepo>();
             var account = new UserAddDTO
             {
                 UserName = "TestCase1",
@@ -384,12 +391,632 @@ namespace WebEnterprise.Test
         #endregion
 
         #region PostTest
+
+        [Test]
+        public void GetAllPostTest()
+        {
+            var result = postRepo.GetAllPost();
+
+            Assert.IsTrue(result != null);
+        }
+
+        [Test]
+        public void AddPostTest()
+        {
+            bool result;
+            using(var trans = context.Database.BeginTransaction())
+            {
+                var test = new PostDTO
+                {
+                    Title = "title123",
+                    Description = "des12345",
+                    CatId = 1,
+                };
+                result = postRepo.AddPost(test, "1");
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void AddPostTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new PostDTO
+                {
+                    Title = "title123",
+                    Description = "des12345",
+                    CatId = 1,
+                };
+                var authorId = "";
+                result = postRepo.AddPost(test, authorId);
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void EditPostTest()
+        {
+            bool result;
+            using(var trans = context.Database.BeginTransaction())
+            {
+                var test = new PostDTO
+                {
+                    Id = 1,
+                    Title = "Test12345",
+                    Description = "test12345",
+                    CatId = 1,
+                    OpenDate = DateTime.Now,
+                    ClosedDate = DateTime.Now.AddDays(3),
+                };
+                result = postRepo.EditPost(test);
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void EditPostTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new PostDTO
+                {
+                    Id = 0,
+                    Title = "Test12345",
+                    Description = "test12345",
+                    CatId = 1,
+                    OpenDate = DateTime.Now,
+                    ClosedDate = DateTime.Now.AddDays(3),
+                };
+                result = postRepo.EditPost(test);
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void DeletePostTest()
+        {
+            bool result;
+            using(var trans = context.Database.BeginTransaction())
+            {
+                int id = 1;
+                result = postRepo.DeletePost(id);
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void DeletePostTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int id = 0;
+                result = postRepo.DeletePost(id);
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
         #endregion
 
         #region CategoryTest
+
+        [Test]
+        public void GetAllCatTest()
+        {
+            var result = catRepo.GetAllCategory();
+            Assert.IsTrue(result != null);
+        }
+
+        [Test]
+        public void AddCatTest()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var cat = new CatDTO
+                {
+                    CatName = "TestCat1",
+                    Description = "TestDes1"
+                };
+                result = catRepo.AddCat(cat);
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void AddCatTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var cat = new CatDTO
+                {
+                    CatName = "TestCat1",
+                };
+                result = catRepo.AddCat(cat);
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void EditCatTest()
+        {
+            bool result;
+            using(var trans = context.Database.BeginTransaction())
+            {
+                var test = new CatDTO
+                {
+                    Id = 1,
+                    CatName = "Coding",
+                    Description = "Coding"
+                };
+                result = catRepo.EditCat(test);
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void EditCatTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new CatDTO
+                {
+                    Id = 0,
+                    CatName = "Coding",
+                    Description = "Coding"
+                };
+                result = catRepo.EditCat(test);
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void DeleteCatTest()
+        {
+            bool result;
+            using(var trans = context.Database.BeginTransaction())
+            {
+                int id = 1;
+                result = catRepo.DeleteCat(id);
+
+                trans.Rollback();
+            }
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void DeleteCatTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int id = 0;
+                result = catRepo.DeleteCat(id);
+
+                trans.Rollback();
+            }
+
+            Assert.IsFalse(result);
+        }
+
         #endregion
 
         #region DepartmentTest
+
+        [Test]
+        public void GetAllDepartTest()
+        {
+            var result = departmentRepo.GetAllDepartment();
+            Assert.IsTrue(result != null);
+        }
+
+        [Test]
+        public void AddDepartTest()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var depart = new DepartDTO
+                {
+                    DepartName = "TestCat1",
+                    Description = "TestDes1"
+                };
+                result = departmentRepo.AddDepart(depart);
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void AddDepartTesFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var depart = new DepartDTO
+                {
+                    Description = "TestDes1"
+                };
+                result = departmentRepo.AddDepart(depart);
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void EditDepartTest()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new DepartDTO
+                {
+                    Id = 1,
+                    DepartName = "IT",
+                    Description = "Name"
+                };
+                result = departmentRepo.EditDepart(test);
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void EditDepartTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new DepartDTO
+                {
+                    Id = 0,
+                    DepartName = "IT",
+                    Description = "Coding"
+                };
+                result = departmentRepo.EditDepart(test);
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void DeleteDepartTest()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int id = 1;
+                result = departmentRepo.DeleteDepart(id);
+
+                trans.Rollback();
+            }
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void DeleteDepartTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int id = 0;
+                result = departmentRepo.DeleteDepart(id);
+
+                trans.Rollback();
+            }
+
+            Assert.IsFalse(result);
+        }
+
+        #endregion
+
+        #region UserTest
+
+        [Test]
+        public void GetAllUserPostTest()
+        {
+            var result = userRepo.GetAllPost("1");
+            Assert.IsTrue(result != null);
+        }
+
+        [Test]
+        public void GetUserPostTest()
+        {
+            var result = userRepo.GetUserPost("1");
+            Assert.IsTrue(result != null);
+        }
+
+        [Test]
+        public void GetPostDetail()
+        {
+            var result = userRepo.GetPostDetail(1);
+            Assert.IsTrue(result != null);
+        }
+
+        [Test]
+        public void GetPostDetailFail()
+        {
+            var result = userRepo.GetPostDetail(0);
+            Assert.IsFalse(result != null);
+        }
+
+        [Test]
+        public void GetPostForComment()
+        {
+            var result = userRepo.GetPostForComment(1, "1");
+            Assert.IsTrue(result != null);
+        }
+
+        [Test]
+        public void AddPostUserTest()
+        {
+            bool result;
+            using(var trans = context.Database.BeginTransaction())
+            {
+                var test = new PostDTO
+                {
+                    Title = "Test123",
+                    Description = "Test123",
+                    CatId = 1,
+                };
+                result = userRepo.AddPost(test, "1");
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void AddPostUserTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new PostDTO
+                {
+                    Title = "Test123",
+                    CatId = 1,
+                };
+                result = userRepo.AddPost(test, "1");
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void EditPostUserTest()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new PostDTO
+                {
+                    Id = 1,
+                    Title = "Test123",
+                    Description = "Test123",
+                    OpenDate = DateTime.Now,
+                    ClosedDate = DateTime.Now.AddDays(3),
+                    CatId = 1,
+                };
+                result = userRepo.EditPost(test);
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void EditPostUserTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new PostDTO
+                {
+                    Id = 0,
+                    Title = "Test123",
+                    Description = "Test123",
+                    OpenDate = DateTime.Now,
+                    ClosedDate = DateTime.Now.AddDays(3),
+                    CatId = 1,
+                };
+                result = userRepo.EditPost(test);
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void DeletePostUserTest()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int id = 1;
+                result = userRepo.DeletePost(id);
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+        
+        [Test]
+        public void DeletePostUserTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int id = 0;
+                result = userRepo.DeletePost(id);
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void LikeTest()
+        {
+            UserLikePost result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var like = new UserLikePost
+                {
+                    UserId = "1",
+                    PostId = 1,
+                };
+
+                result = userRepo.Like(like);
+                trans.Rollback();
+            }
+            Assert.IsTrue(result.Status);
+        }
+
+        [Test]
+        public void DisLikeTest()
+        {
+            UserLikePost result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var like = new UserLikePost
+                {
+                    UserId = "1",
+                    PostId = 1,
+                };
+
+                result = userRepo.Dislike(like);
+                trans.Rollback();
+            }
+            Assert.IsTrue(!result.Status);
+        }
+
+        [Test]
+        public void AddCommentTest()
+        {
+            bool result;
+            using(var trans = context.Database.BeginTransaction())
+            {
+                var comment = new CommentDTO
+                {
+                    PostId = 1,
+                    Description = "test123"
+                };
+                result = userRepo.AddComment(comment, "1");
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void GetAllCommentTest()
+        {
+            var result = userRepo.GetAllComment(1);
+            Assert.IsTrue(result != null);
+        }
+
+        [Test]
+        public void GetAllCommentTestFail()
+        {
+            var result = userRepo.GetAllComment(0);
+            Assert.IsFalse(result != null);
+        }
+
+        [Test]
+        public void EditCommentTest()
+        {
+            bool result;
+            using(var trans = context.Database.BeginTransaction())
+            {
+                var test = new CommentDTO
+                {
+                    CommentId = 1,
+                    Description = "Test123"
+                };
+                result = userRepo.EditComment(test, "1");
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void EditCommentTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var test = new CommentDTO
+                {
+                    CommentId = 0,
+                    Description = "Test123"
+                };
+                result = userRepo.EditComment(test, "1");
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void DeleteCommnetTest()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int id = 1;
+                result = userRepo.DeleteComment(id, "1");
+
+                trans.Rollback();
+            }
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void DeleteCommnetTestFail()
+        {
+            bool result;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                int id = 0;
+                result = userRepo.DeleteComment(id, "1");
+
+                trans.Rollback();
+            }
+            Assert.IsFalse(result);
+        }
+
         #endregion
     }
 }

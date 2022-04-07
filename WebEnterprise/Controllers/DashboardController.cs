@@ -7,7 +7,7 @@ using WebEnterprise.Models.DTO;
 
 namespace WebEnterprise.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Coordinator, Assurance")]
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext context;

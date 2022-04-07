@@ -21,6 +21,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAssuranceRepo, AssuranceRepo>();
 builder.Services.AddScoped<ICoorRepo, CoorRepo>();
 builder.Services.AddScoped<IStaffRepo, StaffRepo>();
+builder.Services.AddScoped<ICategoryRepo, CatRepo>();
+builder.Services.AddScoped<IDepartmentRepo, DepartmentRepo>();
+builder.Services.AddScoped<IPostRepo, PostRepo>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 var app = builder.Build();
 

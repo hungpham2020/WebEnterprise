@@ -75,7 +75,6 @@ namespace WebEnterprise.Controllers
 
             ViewBag.Paging = paging;
             ViewDepartment();
-            Notifiation();
             return View(staffs);
         }
 
@@ -112,7 +111,6 @@ namespace WebEnterprise.Controllers
                 return RedirectToAction("Index");
             }
             SelectedDepart(id);
-            Notifiation();
             return View(staff);
         }
         
@@ -141,19 +139,6 @@ namespace WebEnterprise.Controllers
             }
             TempData["message"] = $"Successfully Delete Staff";
             return RedirectToAction("Index");
-        }
-
-        private void Notifiation()
-        {
-            var notes = (from n in context.Notifications
-                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
-                         select new Notification
-                         {
-                             description = n.description,
-                             date = n.date
-                         }).ToList();
-            notes.OrderByDescending(c => c.date).Take(5).ToList();
-            ViewBag.Not = notes;
         }
     }
 }

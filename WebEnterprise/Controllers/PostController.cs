@@ -9,6 +9,7 @@ using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.Common;
 using WebEnterprise.Models.DTO;
+using WebEnterprise.Repository.Interfaces;
 
 namespace WebEnterprise.Controllers
 {
@@ -16,10 +17,12 @@ namespace WebEnterprise.Controllers
     public class PostController : Controller
     {
         private readonly ApplicationDbContext context;
+        private readonly IPostRepo postRepo;
 
-        public PostController(ApplicationDbContext _context)
+        public PostController(ApplicationDbContext _context, IPostRepo _postRepo)
         {
             context = _context;
+            postRepo = _postRepo;
         }
 
         private void ViewCat()
@@ -68,20 +71,7 @@ namespace WebEnterprise.Controllers
             pageSize = pageSize ?? 10;
             keyword = keyword ?? "";
 
-            var posts = from p in context.Posts
-                        join u in context.Users on p.UserId equals u.Id
-                        join c in context.Categories on p.CateId equals c.Id
-                        select new PostDTO
-                        {
-                            Id = p.Id,
-                            Title = p.Title,
-                            Description = p.Description,
-                            CatId = c.Id,
-                            CatName = c.Name,
-                            AuthorName = u.UserName,
-                            Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
-                            DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
-                        };
+            var posts = postRepo.GetAllPost();
             if (!String.IsNullOrEmpty(keyword))
             {
                 posts = posts.Where(p => p.Title.Contains(keyword));
@@ -99,23 +89,6 @@ namespace WebEnterprise.Controllers
             return View(posts);
         }
 
-        public IActionResult GetUserPost()
-        {
-            var posts = (from p in context.Posts
-                         where p.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)
-                         select new Post
-                         {
-                             Id = p.Id,
-                             Title = p.Title,
-                             Description= p.Description,
-                             CateId = p.CateId,
-                             OpenDate = p.OpenDate,
-                             ClosedDate = p.ClosedDate,
-                         }).ToList();
-            Notifiation();
-            return View(posts);
-        }
-
         [HttpPost]
         public IActionResult AddPost(PostDTO res, IFormCollection f)
         {
@@ -128,35 +101,11 @@ namespace WebEnterprise.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var post = new Post();
-                    post.Title = res.Title;
-                    post.Description = res.Description;
-                    post.CateId = res.CatId;
-                    post.OpenDate = DateTime.Now;
-                    post.ClosedDate = post.OpenDate?.AddDays(14);
-                    post.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var result = postRepo.AddPost(res, User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                    var note = new Notification();
-                    var user = (from u in context.Users
-                                where u.Id == post.UserId
-                                select new CustomUser
-                                {
-                                    Id = u.Id,
-                                    FullName = u.FullName,
-                                    UserName = u.UserName
-                                }).FirstOrDefault();
-
-                    if (user != null)
+                    if (result)
                     {
-                        note.description = $"{user.UserName} add new post {post.Title}";
-                        note.date = DateTime.Now;
-                        note.UserId = post.UserId;
-
-                        context.Posts.Add(post);
-                        context.Notifications.Add(note);
-                        context.SaveChanges();
-
-                        TempData["message"] = $"Successfully Add new Post {post.Title}";
+                        TempData["message"] = $"Successfully Add new Post {res.Title}";
                         return RedirectToAction("Index");
                     }
                 }
@@ -168,43 +117,24 @@ namespace WebEnterprise.Controllers
 
         public IActionResult EditPost(int id)
         {
-            var post = context.Posts.Where(u => u.Id == id).Select(u => new PostDTO
-            {
-                Id = id,
-                Title = u.Title,
-                Description = u.Description,
-                OpenDate = u.OpenDate,
-                ClosedDate = u.ClosedDate,
-                CatId = u.CateId
-            }).FirstOrDefault();
+            var post = postRepo.GetEditPost(id);
             if (post == null)
             {
                 return RedirectToAction("Index");
             }
-            ViewCate();
             SelectedCat(id);
-            Notifiation();
             return View(post);
         }
 
         [HttpPost]
         public IActionResult EditPost(PostDTO res)
         {
-            var post = context.Posts.Find(res.Id);
-            if (post != null)
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var result = postRepo.EditPost(res);
+                if (result)
                 {
-                    post.Id = res.Id;
-                    post.Title = res.Title;
-                    post.Description = res.Description;
-                    post.OpenDate = res.OpenDate;
-                    post.ClosedDate = res.ClosedDate;
-                    post.CateId = res.CatId;
-
-                    context.Entry(post).State = EntityState.Modified;
-                    context.SaveChanges();
-                    TempData["message"] = $"Successfully Edit Post {post.Title}";
+                    TempData["message"] = $"Successfully Edit Post {res.Title}";
                     return RedirectToAction("Index");
                 }
             }
@@ -214,35 +144,17 @@ namespace WebEnterprise.Controllers
 
         public IActionResult DeletePost(int id)
         {
-            var post = context.Posts.FirstOrDefault(p => p.Id == id);
-            var user = context.Users.FirstOrDefault(u => u.Id == post.UserId);
-            var note = context.Notifications.FirstOrDefault(p => p.description.Contains($"{user.UserName} add new post {post.Title}"));
-            if (post != null)
+            var result = postRepo.DeletePost(id);
+            if(result)
             {
-                context.Remove(note);
-                context.Remove(post);
-                context.SaveChanges();
-                TempData["message"] = $"Successfully Delete Post {post.Title}";
+                TempData["message"] = $"Successfully Delete Post";
             }
             return RedirectToAction("Index");
         }
 
         public FileResult Export()
         {
-            var posts = (from p in context.Posts
-                        join u in context.Users on p.UserId equals u.Id
-                        join c in context.Categories on p.CateId equals c.Id
-                        select new PostDTO
-                        {
-                            Id = p.Id,
-                            Title = p.Title,
-                            Description = p.Description,
-                            CatId = c.Id,
-                            CatName = c.Name,
-                            AuthorName = u.UserName,
-                            Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
-                            DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
-                        }).ToList();
+            var posts = postRepo.GetAllPost().ToList();
 
             FileInfo template = new FileInfo(@"wwwroot/template/Post.xlsx");
 

@@ -3,17 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using WebEnterprise.Data;
 using WebEnterprise.Models;
 using WebEnterprise.Models.Common;
+using WebEnterprise.Models.DTO;
+using WebEnterprise.Repository.Interfaces;
 
 namespace WebEnterprise.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class DepartmentController : Controller
     {
-        private readonly ApplicationDbContext context;
+        private readonly IDepartmentRepo departmentRepo;
 
-        public DepartmentController(ApplicationDbContext _context)
+        public DepartmentController(IDepartmentRepo _departmentRepo)
         {
-            context = _context;
+            departmentRepo = _departmentRepo;
         }
 
         public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
@@ -22,7 +24,7 @@ namespace WebEnterprise.Controllers
             pageSize = pageSize ?? 10;
             keyword = keyword ?? "";
 
-            var departments = context.Departments.Select(x => x);
+            var departments = departmentRepo.GetAllDepartment();
             if (!String.IsNullOrEmpty(keyword))
             {
                 departments = departments.Where(c => c.Name.Contains(keyword));
@@ -39,20 +41,14 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddDepart(string name, string description)
+        public IActionResult AddDepart(DepartDTO depart)
         {
             if (ModelState.IsValid)
             {
-                if(name != null && description != null)
+                var result = departmentRepo.AddDepart(depart);
+                if(result)
                 {
-                    var department = new Department
-                    {
-                        Name = name,
-                        Description = description
-                    };
-                    context.Add(department);
-                    context.SaveChanges();
-                    TempData["message"] = $"Successfully Add new Department {department.Name}";
+                    TempData["message"] = $"Successfully Add new Department {depart.DepartName}";
                     return RedirectToAction("Index");
                 }
             }
@@ -62,7 +58,7 @@ namespace WebEnterprise.Controllers
 
         public IActionResult EditDepartment(int id)
         {
-            var depart = context.Departments.Where(x => x.Id == id).FirstOrDefault();
+            var depart = departmentRepo.GetDepartDetail(id);
             if (depart == null)
             {
                 return RedirectToAction("Index");
@@ -71,20 +67,17 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditDepartment(Department req)
+        public IActionResult EditDepartment(DepartDTO req)
         {
             if (ModelState.IsValid)
             {
-                var department = context.Departments.Where(x => x.Id == req.Id).FirstOrDefault();
-                if (department == null)
+                var result = departmentRepo.EditDepart(req);
+                if (!result)
                 {
                     TempData["message"] = $"Department not Found";
                     return View(req);
                 }
-                department.Name = req.Name;
-                department.Description = req.Description;
-                context.SaveChanges();
-                TempData["message"] = $"Successfully edit department with name {department.Name}";
+                TempData["message"] = $"Successfully edit department with name {req.DepartName}";
                 return RedirectToAction("Index");
             }
             return View(req);
@@ -92,14 +85,12 @@ namespace WebEnterprise.Controllers
 
         public IActionResult DeleteDepartment(int id)
         {
-            var department = context.Departments.FirstOrDefault(x => x.Id == id);
-            if (department == null)
+            var result = departmentRepo.DeleteDepart(id);
+            if (!result)
             {
-                TempData["message"] = $"Department not Found";
+                TempData["message"] = $"Cannot Delete Department";
                 return RedirectToAction("Index");
             }
-            context.Remove(department);
-            context.SaveChanges();
             TempData["message"] = $"Successfully delete department";
             return RedirectToAction("Index");
         }

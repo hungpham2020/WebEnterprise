@@ -71,7 +71,6 @@ namespace WebEnterprise.Controllers
             assurances = assurances.Skip((int)((pageIndex - 1) * pageSize)).Take((int)(pageSize));
 
             assurances.ToList();
-            Notifiation();
             ViewBag.Paging = paging;
             ViewDepartment();
             return View(assurances);
@@ -109,7 +108,6 @@ namespace WebEnterprise.Controllers
             {
                 return RedirectToAction("Index");
             }
-            Notifiation();
             SelectedDepart(id);
             return View(assurance);
         }
@@ -140,19 +138,6 @@ namespace WebEnterprise.Controllers
             };
             TempData["message"] = $"Successfully Delete Assurance";
             return RedirectToAction("Index");
-        }
-
-        private void Notifiation()
-        {
-            var notes = (from n in context.Notifications
-                         where n.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier)
-                         select new Notification
-                         {
-                             description = n.description,
-                             date = n.date
-                         }).ToList();
-            notes.OrderByDescending(c => c.date).Take(5).ToList();
-            ViewBag.Not = notes;
         }
     }
 }
