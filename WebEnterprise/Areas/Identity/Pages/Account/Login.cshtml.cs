@@ -152,7 +152,7 @@ namespace WebEnterprise.Areas.Identity.Pages.Account
                 }
                 if (role == "Assurance")
                 {
-                    return RedirectToAction("Index", "User");
+                    return RedirectToAction("AssuranceIndex", "User");
                 }
                 if (role == "Coordinator")
                 {
