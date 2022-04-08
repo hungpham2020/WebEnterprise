@@ -74,10 +74,10 @@ namespace WebEnterprise.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var posts = userRepo.GetAllPost(userId);
+
             var paging = new CommonPaging(posts.Count(), pageIndex, pageSize);
-
-            posts = posts.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
-
+            posts = posts.Skip((int)((pageIndex - 1) * pageSize)).Take((int)(pageSize));
+                
             switch (filter1)
             {
                 case 1:

@@ -196,7 +196,7 @@ namespace WebEnterprise.Repository
                                 Like = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == true).Count(),
                                 DisLike = context.UserLikePosts.Where(x => x.PostId == p.Id && x.Status == false).Count(),
                             };
-                if(posts.Count() > 0)
+                if(posts != null)
                 {
                     return posts;
                 }
