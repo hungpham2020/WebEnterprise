@@ -3,7 +3,7 @@
     CommonPaging paging = ViewBag.Paging;
 }
 
-@if(paging.TotalPages >= 1)
+@if(paging != null && paging.TotalPages >= 1)
 {
 <ul class="pagination mt-2">
     @if(paging.PageIndex > 1)

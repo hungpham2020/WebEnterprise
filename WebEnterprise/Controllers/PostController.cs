@@ -72,21 +72,18 @@ namespace WebEnterprise.Controllers
             keyword = keyword ?? "";
 
             var posts = postRepo.GetAllPost();
-            if(posts != null)
+            if (!String.IsNullOrEmpty(keyword))
             {
-                if (!String.IsNullOrEmpty(keyword))
-                {
-                    posts = posts.Where(p => p.Title.Contains(keyword));
-                }
-
-                var paging = new CommonPaging(posts.Count(), pageIndex, pageSize);
-
-                posts = posts.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
-
-                posts.ToList();
-
-                ViewBag.Paging = paging;
+                posts = posts.Where(p => p.Title.Contains(keyword));
             }
+
+            var paging = new CommonPaging(posts.Count(), pageIndex, pageSize);
+
+            posts = posts.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+            posts.ToList();
+
+            ViewBag.Paging = paging;
             Notifiation();
             ViewCat();
             return View(posts);

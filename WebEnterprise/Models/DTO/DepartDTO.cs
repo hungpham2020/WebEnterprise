@@ -7,7 +7,7 @@ namespace WebEnterprise.Models.DTO
         public int? Id { get; set; }
 
         [Required]
-        [StringLength(maximumLength: 10, MinimumLength = 4, ErrorMessage = "Name must be 4 to 10 digits")]
+        [StringLength(maximumLength: 10, ErrorMessage = "Name must be 4 to 10 digits")]
         public string? DepartName { get; set; }
 
         [Required]

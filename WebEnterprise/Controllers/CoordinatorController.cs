@@ -62,22 +62,18 @@ namespace WebEnterprise.Controllers
             keyword = keyword ?? "";
 
             var coordinators = coorRepo.GetAllCoor();
-
-            if (coordinators != null)
+            if (!String.IsNullOrEmpty(keyword))
             {
-                if (!String.IsNullOrEmpty(keyword))
-                {
-                    coordinators = coordinators.Where(c => c.FullName.Contains(keyword));
-                }
-
-                var paging = new CommonPaging(coordinators.Count(), pageIndex, pageSize);
-
-                coordinators = coordinators.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
-
-                coordinators.ToList();
-
-                ViewBag.Paging = paging;
+                coordinators = coordinators.Where(c => c.FullName.Contains(keyword));
             }
+
+            var paging = new CommonPaging(coordinators.Count(), pageIndex, pageSize);
+
+            coordinators = coordinators.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+            coordinators.ToList();
+
+            ViewBag.Paging = paging;
             ViewDepartment();
             return View(coordinators);
         }
