@@ -25,18 +25,21 @@ namespace WebEnterprise.Controllers
             keyword = keyword ?? "";
 
             var departments = departmentRepo.GetAllDepartment();
-            if (!String.IsNullOrEmpty(keyword))
+            if(departments != null)
             {
-                departments = departments.Where(c => c.Name.Contains(keyword));
+                if (!String.IsNullOrEmpty(keyword))
+                {
+                    departments = departments.Where(c => c.Name.Contains(keyword));
+                }
+
+                var paging = new CommonPaging(departments.Count(), pageIndex, pageSize);
+
+                departments = departments.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+                departments.ToList();
+
+                ViewBag.Paging = paging;
             }
-
-            var paging = new CommonPaging(departments.Count(), pageIndex, pageSize);
-
-            departments = departments.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
-
-            departments.ToList();
-
-            ViewBag.Paging = paging;
             return View(departments);
         }
 

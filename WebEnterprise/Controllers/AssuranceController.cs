@@ -61,17 +61,20 @@ namespace WebEnterprise.Controllers
 
             var assurances = assuranceRepo.GetAllAssurances();
 
-            if (!String.IsNullOrEmpty(keyword))
+            if(assurances != null)
             {
-                assurances = assurances.Where(a => a.FullName.Contains(keyword));
+                if (!String.IsNullOrEmpty(keyword))
+                {
+                    assurances = assurances.Where(a => a.FullName.Contains(keyword));
+                }
+
+                var paging = new CommonPaging(assurances.Count(), pageIndex, pageSize);
+
+                assurances = assurances.Skip((int)((pageIndex - 1) * pageSize)).Take((int)(pageSize));
+
+                assurances.ToList();
+                ViewBag.Paging = paging;
             }
-
-            var paging = new CommonPaging(assurances.Count(), pageIndex, pageSize);
-
-            assurances = assurances.Skip((int)((pageIndex - 1) * pageSize)).Take((int)(pageSize));
-
-            assurances.ToList();
-            ViewBag.Paging = paging;
             ViewDepartment();
             return View(assurances);
         }

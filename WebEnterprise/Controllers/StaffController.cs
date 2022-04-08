@@ -62,18 +62,21 @@ namespace WebEnterprise.Controllers
             keyword = keyword ?? "";
 
             var staffs = staffRepo.GetAllStaffs();
-            if (!String.IsNullOrEmpty(keyword))
+            if(staffs != null)
             {
-                staffs = staffs.Where(p => p.FullName.Contains(keyword));
+                if (!String.IsNullOrEmpty(keyword))
+                {
+                    staffs = staffs.Where(p => p.FullName.Contains(keyword));
+                }
+
+                var paging = new CommonPaging(staffs.Count(), pageIndex, pageSize);
+
+                staffs = staffs.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+                staffs.ToList();
+
+                ViewBag.Paging = paging;
             }
-
-            var paging = new CommonPaging(staffs.Count(), pageIndex, pageSize);
-
-            staffs = staffs.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
-
-            staffs.ToList();
-
-            ViewBag.Paging = paging;
             ViewDepartment();
             return View(staffs);
         }

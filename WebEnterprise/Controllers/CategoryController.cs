@@ -26,17 +26,20 @@ namespace WebEnterprise.Controllers
             keyword = keyword ?? "";
 
             var cats = categoryRepo.GetAllCategory();
-            if (!String.IsNullOrEmpty(keyword))
+            if(cats != null)
             {
-                cats = cats.Where(c => c.Name.Contains(keyword));
+                if (!String.IsNullOrEmpty(keyword))
+                {
+                    cats = cats.Where(c => c.Name.Contains(keyword));
+                }
+
+                var paging = new CommonPaging(cats.Count(), pageIndex, pageSize);
+
+                cats = cats.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+                cats.ToList();
+                ViewBag.Paging = paging;
             }
-
-            var paging = new CommonPaging(cats.Count(), pageIndex, pageSize);
-
-            cats = cats.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
-            
-            cats.ToList();
-            ViewBag.Paging = paging;
             return View(cats);
         }
 

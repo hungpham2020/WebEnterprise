@@ -74,26 +74,29 @@ namespace WebEnterprise.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var posts = userRepo.GetAllPost(userId);
-            var paging = new CommonPaging(posts.Count(), pageIndex, pageSize);
-
-            posts = posts.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
-
-            switch (filter1)
+            if(posts != null)
             {
-                case 1:
-                    posts = posts.OrderByDescending(x => x.OpenDate);
-                    posts.ToList();
-                    break;
-                case 2:
-                    posts = posts.OrderByDescending(x => x.Like - x.DisLike);
-                    posts.ToList();
-                    break;
-                default:
-                    posts.ToList();
-                    break;
-            }
+                var paging = new CommonPaging(posts.Count(), pageIndex, pageSize);
 
-            ViewBag.Paging = paging;
+                posts = posts.Skip((int)((paging.PageIndex - 1) * paging.PageSize)).Take((int)(paging.PageSize));
+
+                switch (filter1)
+                {
+                    case 1:
+                        posts = posts.OrderByDescending(x => x.OpenDate);
+                        posts.ToList();
+                        break;
+                    case 2:
+                        posts = posts.OrderByDescending(x => x.Like - x.DisLike);
+                        posts.ToList();
+                        break;
+                    default:
+                        posts.ToList();
+                        break;
+                }
+
+                ViewBag.Paging = paging;
+            }
             ViewCat();
             Notifiation();
             return View(posts);
