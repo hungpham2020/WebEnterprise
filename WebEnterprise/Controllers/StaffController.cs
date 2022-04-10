@@ -92,7 +92,7 @@ namespace WebEnterprise.Controllers
                 if (ModelState.IsValid)
                 {
                     var account = await staffRepo.AddStaff(user);
-                    if (account.Id != null)
+                    if (account != null)
                     {
                         TempData["message"] = $"Successfully Add new Staff {account.FullName}";
                         return RedirectToAction("Index");

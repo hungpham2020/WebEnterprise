@@ -91,7 +91,7 @@ namespace WebEnterprise.Controllers
                 if (ModelState.IsValid)
                 {
                     var account = await coorRepo.AddCoor(user);
-                    if (account.Id != null)
+                    if (account != null)
                     {
                         TempData["message"] = $"Successfully Add new Coordinator {account.FullName}";
                         return RedirectToAction("Index");
