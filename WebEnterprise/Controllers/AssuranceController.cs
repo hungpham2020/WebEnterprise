@@ -81,12 +81,12 @@ namespace WebEnterprise.Controllers
         public async Task<IActionResult>AddAssurance(UserAddDTO user, IFormCollection f)
         {
             var depart = LoadDepartment(f["DepartmentIds"]);
-            foreach (var d in depart)
-            {
-                user.DepartId = d.Id;
-            }
             if (depart != null)
             {
+                foreach (var d in depart)
+                {
+                    user.DepartId = d.Id;
+                }
                 if (ModelState.IsValid)
                 {
                     var account = await assuranceRepo.AddAssurance(user);

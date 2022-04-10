@@ -13,7 +13,6 @@ using WebEnterprise.Repository.Interfaces;
 
 namespace WebEnterprise.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class PostController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -25,6 +24,7 @@ namespace WebEnterprise.Controllers
             postRepo = _postRepo;
         }
 
+        [Authorize(Roles = "Admin")]
         private void ViewCat()
         {
             ViewBag.Cat = context.Categories.ToList();
@@ -40,6 +40,7 @@ namespace WebEnterprise.Controllers
 
             ViewBag.Cat = new SelectList(cats, "Id", "Name");
         }
+        [Authorize(Roles = "Admin")]
         private List<Category> LoadCat(string form)
         {
             if (form != null)
@@ -53,6 +54,7 @@ namespace WebEnterprise.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         private void SelectedCat(int id)
         {
             var selectedCat = context.Categories.FirstOrDefault(c => c.Id == id);
@@ -65,6 +67,7 @@ namespace WebEnterprise.Controllers
             ViewBag.SelectedCat = new SelectList(cats, selectedCat);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Index(string? keyword, int? pageIndex, int? pageSize)
         {
             pageIndex = pageIndex ?? 1;
@@ -89,6 +92,7 @@ namespace WebEnterprise.Controllers
             return View(posts);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult AddPost(PostDTO res, IFormCollection f)
         {
@@ -115,6 +119,7 @@ namespace WebEnterprise.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult EditPost(int id)
         {
             var post = postRepo.GetEditPost(id);
@@ -126,6 +131,7 @@ namespace WebEnterprise.Controllers
             return View(post);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult EditPost(PostDTO res)
         {
@@ -142,6 +148,7 @@ namespace WebEnterprise.Controllers
             return View(res);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult DeletePost(int id)
         {
             var result = postRepo.DeletePost(id);
@@ -152,6 +159,7 @@ namespace WebEnterprise.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin, Assurance")]
         public FileResult Export()
         {
             var posts = postRepo.GetAllPost().ToList();

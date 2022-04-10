@@ -36,7 +36,7 @@ namespace WebEnterprise.Data
                 //   .AddJsonFile("appsettings.json")
                 //   .Build();
                 //var connectionString = configuration.GetConnectionString("Default");
-                optionsBuilder.UseSqlServer("data source=DESKTOP-ST724GG\\SQLEXPRESS;initial catalog=WebEnterpriseMVC;persist security info=True;user id=sa;password=1234567;MultipleActiveResultSets=True;App=EntityFramework");
+                optionsBuilder.UseSqlServer("data source=20.124.237.99;initial catalog=WebEnterpriseMVC;persist security info=True;user id=sa;password=Team8perfect;MultipleActiveResultSets=True;App=EntityFramework");
             }
         }
 
