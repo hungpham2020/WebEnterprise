@@ -170,13 +170,13 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public IActionResult AddPost(PostDTO res, IFormCollection f)
         {
-            var cat = LoadCat(f["CatIds"]);
-            foreach (var c in cat)
-            {
-                res.CatId = c.Id;
-            }
             if (res.CatId != 0)
             {
+                var cat = LoadCat(f["CatIds"]);
+                foreach (var c in cat)
+                {
+                    res.CatId = c.Id;
+                }
                 if (ModelState.IsValid)
                 {
                     var result = userRepo.AddPost(res, User.FindFirstValue(ClaimTypes.NameIdentifier));

@@ -8,16 +8,20 @@ namespace WebEnterprise.Models.Validation
         protected override ValidationResult? IsValid(object? value, ValidationContext context)
         {
             var model = (PostDTO)context.ObjectInstance;
-            DateTime openDate = Convert.ToDateTime(model.OpenDate);
-            DateTime closedDate = Convert.ToDateTime(value);
-            if(openDate >= closedDate)
+            DateTime? openDate = Convert.ToDateTime(model?.OpenDate);
+            DateTime? closedDate = Convert.ToDateTime(value);
+            if(openDate != null && closedDate != null)
             {
-                return new ValidationResult("Closed Date cannot greater than Open Date");
+                if (openDate >= closedDate)
+                {
+                    return new ValidationResult("Closed Date cannot greater than Open Date");
+                }
+                else
+                {
+                    return ValidationResult.Success;
+                }
             }
-            else
-            {
-                return ValidationResult.Success;
-            }
+            return ValidationResult.Success;
         }
     }
 }

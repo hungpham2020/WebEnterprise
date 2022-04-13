@@ -115,7 +115,6 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public IActionResult EditAssurance(UserDTO res)
         {
-
             if (ModelState.IsValid)
             {
                 var assurance = assuranceRepo.EditAssurance(res);

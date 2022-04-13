@@ -18,6 +18,7 @@ namespace WebEnterprise.Models.DTO
         public DateTime? OpenDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        //[Date]
         public DateTime? ClosedDate { get; set; }
         public int? CatId { get; set; }
 
