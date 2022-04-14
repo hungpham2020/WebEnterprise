@@ -489,7 +489,7 @@ namespace WebEnterprise.Test
             bool result;
             using(var trans = context.Database.BeginTransaction())
             {
-                int id = 1;
+                int id = 4;
                 result = postRepo.DeletePost(id);
                 trans.Rollback();
             }
@@ -563,7 +563,7 @@ namespace WebEnterprise.Test
             {
                 var test = new CatDTO
                 {
-                    Id = 1,
+                    Id = 2,
                     CatName = "Coding",
                     Description = "Coding"
                 };
@@ -599,7 +599,7 @@ namespace WebEnterprise.Test
             bool result;
             using(var trans = context.Database.BeginTransaction())
             {
-                int id = 1;
+                int id = 2;
                 result = catRepo.DeleteCat(id);
 
                 trans.Rollback();
@@ -713,7 +713,7 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                int id = 1;
+                int id = 2;
                 result = departmentRepo.DeleteDepart(id);
 
                 trans.Rollback();
@@ -772,7 +772,7 @@ namespace WebEnterprise.Test
         [Test]
         public void GetPostForComment()
         {
-            var result = userRepo.GetPostForComment(1, "1");
+            var result = userRepo.GetPostForComment(4, "1");
             Assert.IsTrue(result != null);
         }
 
@@ -863,7 +863,7 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                int id = 1;
+                int id = 4;
                 result = userRepo.DeletePost(id);
 
                 trans.Rollback();
@@ -995,7 +995,7 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                int id = 1;
+                int id = 3;
                 result = userRepo.DeleteComment(id, "1");
 
                 trans.Rollback();

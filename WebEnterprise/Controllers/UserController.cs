@@ -113,16 +113,17 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public IActionResult Comment(CommentDTO c)
         {
-            var result = userRepo.AddComment(c, User.FindFirstValue(ClaimTypes.NameIdentifier));
-           if(!result)
+            if (ModelState.IsValid)
             {
-                TempData["message"] = $"You cannot comment, please check your account or post again!";
-                return RedirectToAction("ShowComment");
+                var result = userRepo.AddComment(c, User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (result)
+                {
+                    TempData["message"] = $"Successfully comment";
+                    return RedirectToAction("ShowComment", new { id = c.PostId });
+                }
             }
-            else
-            {
-                return RedirectToAction("ShowComment", new { id = c.PostId });
-            }
+            TempData["message"] = $"You cannot comment, please check your account or post again!";
+            return RedirectToAction("ShowComment", new { id = c.PostId });
         }
 
 
@@ -140,11 +141,14 @@ namespace WebEnterprise.Controllers
         [HttpPost]
         public IActionResult EditComment(CommentDTO req)
         {
-            var result = userRepo.EditComment(req, User.FindFirstValue(ClaimTypes.NameIdentifier));
-            if (result)
+            if (ModelState.IsValid)
             {
-                TempData["message"] = $"Successfully Edit Comment";
-                return RedirectToAction("ShowComment", new { id = req.PostId });
+                var result = userRepo.EditComment(req, User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (result)
+                {
+                    TempData["message"] = $"Successfully Edit Comment";
+                    return RedirectToAction("ShowComment", new { id = req.PostId });
+                }
             }
             TempData["message"] = $"Cannot Edit Comment";
             return RedirectToAction("ShowComment", new { id = req.PostId });
@@ -152,14 +156,15 @@ namespace WebEnterprise.Controllers
 
         public IActionResult DeleteComment(int id)
         {
+            var postId = context.Comments.Where(x => x.Id == id). Select(x => x.PostId).FirstOrDefault();
             var result = userRepo.DeleteComment(id, User.FindFirstValue(ClaimTypes.NameIdentifier));
             if (result)
             {
                 TempData["message"] = $"Delete Comment Successfully!";
-                return RedirectToAction("ShowComment", new { id = id});
+                return RedirectToAction("ShowComment", new { id = postId });
             }
             TempData["message"] = $"You not have permission to delete this comment";
-            return RedirectToAction("ShowComment", new { id = id });
+            return RedirectToAction("ShowComment", new { id = postId });
         }
 
 

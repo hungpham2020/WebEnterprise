@@ -12,6 +12,7 @@ namespace WebEnterprise.Models.DTO
 
         public int? PostId { get; set; }
 
+        [Required]
         public string? Description { get; set; }
         
         public string? PostDescription { get; set; }
