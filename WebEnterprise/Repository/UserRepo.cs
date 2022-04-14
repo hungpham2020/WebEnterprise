@@ -95,6 +95,12 @@ namespace WebEnterprise.Repository
                     context.SaveChanges();
                     return true;
                 }
+                else if (post != null && user != null)
+                {
+                    context.Remove(post);
+                    context.SaveChanges();
+                    return true;
+                }
             }
             return false;
         }

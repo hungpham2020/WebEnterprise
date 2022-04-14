@@ -105,7 +105,7 @@ namespace WebEnterprise.Test
             {
                 var user = new UserDTO
                 {
-                    Id = "60395add-292d-4224-8d54-f9376bba5e66",
+                    Id = "b5562f73-74ea-4596-9856-fde7f75ae009",
                     UserName = "Student6",
                     FullName = "Student 7",
                     Email = "student6@gmail.com",
@@ -141,7 +141,7 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                string id = "60395add-292d-4224-8d54-f9376bba5e66";
+                string id = "b5562f73-74ea-4596-9856-fde7f75ae009";
                 result = AssuranRepo.DeleteAssurance(id);
 
                 trans.Rollback();
@@ -216,7 +216,7 @@ namespace WebEnterprise.Test
             {
                 var user = new UserDTO
                 {
-                    Id = "60395add-292d-4224-8d54-f9376bba5e66",
+                    Id = "b5562f73-74ea-4596-9856-fde7f75ae009",
                     UserName = "Student6",
                     FullName = "Student 7",
                     Email = "student6@gmail.com",
@@ -252,7 +252,7 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                string id = "60395add-292d-4224-8d54-f9376bba5e66";
+                string id = "b5562f73-74ea-4596-9856-fde7f75ae009";
                 result = staffRepo.DeleteStaff(id);
 
                 trans.Rollback();
@@ -328,7 +328,7 @@ namespace WebEnterprise.Test
             {
                 var user = new UserDTO
                 {
-                    Id = "60395add-292d-4224-8d54-f9376bba5e66",
+                    Id = "b5562f73-74ea-4596-9856-fde7f75ae009",
                     UserName = "Student6",
                     FullName = "Student 7",
                     Email = "student6@gmail.com",
@@ -364,7 +364,7 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                string id = "60395add-292d-4224-8d54-f9376bba5e66";
+                string id = "b5562f73-74ea-4596-9856-fde7f75ae009";
                 result = coorRepo.DeleteCoor(id);
 
                 trans.Rollback();
@@ -447,7 +447,7 @@ namespace WebEnterprise.Test
             {
                 var test = new PostDTO
                 {
-                    Id = 1,
+                    Id = 4,
                     Title = "Test12345",
                     Description = "test12345",
                     CatId = 1,
@@ -677,7 +677,7 @@ namespace WebEnterprise.Test
             {
                 var test = new DepartDTO
                 {
-                    Id = 1,
+                    Id = 2,
                     DepartName = "IT",
                     Description = "Name"
                 };
@@ -758,7 +758,7 @@ namespace WebEnterprise.Test
         [Test]
         public void GetPostDetail()
         {
-            var result = userRepo.GetPostDetail(1);
+            var result = userRepo.GetPostDetail(4);
             Assert.IsTrue(result != null);
         }
 
@@ -821,7 +821,7 @@ namespace WebEnterprise.Test
             {
                 var test = new PostDTO
                 {
-                    Id = 1,
+                    Id = 4,
                     Title = "Test123",
                     Description = "Test123",
                     OpenDate = DateTime.Now,
@@ -961,7 +961,7 @@ namespace WebEnterprise.Test
             {
                 var test = new CommentDTO
                 {
-                    CommentId = 1,
+                    CommentId = 10,
                     Description = "Test123"
                 };
                 result = userRepo.EditComment(test, "1");
@@ -995,7 +995,7 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                int id = 3;
+                int id = 10;
                 result = userRepo.DeleteComment(id, "1");
 
                 trans.Rollback();
