@@ -40,16 +40,16 @@ namespace WebEnterprise.Repository
             return false;
         }
 
-        public bool EditCat(CatDTO req)
+        public bool EditCat(Category req)
         {
             var cat = GetCatDetail(req.Id);
             if(cat == null)
             {
                 return false;
             }
-            if(!string.IsNullOrEmpty(req.CatName) && !string.IsNullOrEmpty(req.Description))
+            if(!string.IsNullOrEmpty(req.Name) && !string.IsNullOrEmpty(req.Description))
             {
-                cat.Name = req.CatName;
+                cat.Name = req.Name;
                 cat.Description = req.Description;
                 context.SaveChanges();
                 return true;

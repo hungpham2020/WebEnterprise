@@ -67,7 +67,7 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditDepartment(DepartDTO req)
+        public IActionResult EditDepartment(Department req)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace WebEnterprise.Controllers
                     TempData["message"] = $"Department not Found";
                     return View(req);
                 }
-                TempData["message"] = $"Successfully edit department with name {req.DepartName}";
+                TempData["message"] = $"Successfully edit department with name {req.Name}";
                 return RedirectToAction("Index");
             }
             return View(req);

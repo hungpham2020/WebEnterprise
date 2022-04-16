@@ -13,6 +13,6 @@ namespace WebEnterprise.Repository.Interfaces
 
         public bool DeleteCat(int id);
 
-        public bool EditCat(CatDTO req);
+        public bool EditCat(Category req);
     }
 }

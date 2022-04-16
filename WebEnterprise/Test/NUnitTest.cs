@@ -561,10 +561,10 @@ namespace WebEnterprise.Test
             bool result;
             using(var trans = context.Database.BeginTransaction())
             {
-                var test = new CatDTO
+                var test = new Category
                 {
                     Id = 2,
-                    CatName = "Coding",
+                    Name = "Coding",
                     Description = "Coding"
                 };
                 result = catRepo.EditCat(test);
@@ -580,10 +580,10 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                var test = new CatDTO
+                var test = new Category
                 {
                     Id = 0,
-                    CatName = "Coding",
+                    Name = "Coding",
                     Description = "Coding"
                 };
                 result = catRepo.EditCat(test);
@@ -675,10 +675,10 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                var test = new DepartDTO
+                var test = new Department
                 {
                     Id = 2,
-                    DepartName = "IT",
+                    Name = "IT",
                     Description = "Name"
                 };
                 result = departmentRepo.EditDepart(test);
@@ -694,10 +694,10 @@ namespace WebEnterprise.Test
             bool result;
             using (var trans = context.Database.BeginTransaction())
             {
-                var test = new DepartDTO
+                var test = new Department
                 {
                     Id = 0,
-                    DepartName = "IT",
+                    Name = "IT",
                     Description = "Coding"
                 };
                 result = departmentRepo.EditDepart(test);

@@ -42,14 +42,14 @@ namespace WebEnterprise.Repository
             return true;
         }
 
-        public bool EditDepart(DepartDTO req)
+        public bool EditDepart(Department req)
         {
             var department = GetDepartDetail(req.Id);
             if(department == null)
             {
                 return false;
             }
-            department.Name = req.DepartName;
+            department.Name = req.Name;
             department.Description = req.Description;
             context.SaveChanges();
             return true;

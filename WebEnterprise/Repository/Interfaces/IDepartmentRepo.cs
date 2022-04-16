@@ -13,6 +13,6 @@ namespace WebEnterprise.Repository.Interfaces
 
         public bool DeleteDepart(int id);
 
-        public bool EditDepart(DepartDTO req);
+        public bool EditDepart(Department req);
     }
 }

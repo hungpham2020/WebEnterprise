@@ -68,14 +68,14 @@ namespace WebEnterprise.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditCat(CatDTO res)
+        public IActionResult EditCat(Category res)
         {
             if (ModelState.IsValid)
             {
                 var result = categoryRepo.EditCat(res);
                 if (result)
                 {
-                    TempData["message"] = $"Successfully Edit Category {res.CatName}";
+                    TempData["message"] = $"Successfully Edit Category {res.Name}";
                     return RedirectToAction("Index");
                 }
             }
