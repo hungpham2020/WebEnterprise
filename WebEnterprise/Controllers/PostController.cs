@@ -64,7 +64,7 @@ namespace WebEnterprise.Controllers
                 Name = c.Name,
                 Description = c.Description,
             }).ToList();
-            ViewBag.SelectedCat = new SelectList(cats, selectedCat);
+            ViewBag.SelectedCat = new SelectList(cats, "Id", "Name", selectedCat);
         }
 
         [Authorize(Roles = "Admin")]
